@@ -117,11 +117,129 @@
 			</div>
 			<div th:if="${applications}" class="w-3/4 h-auto p-5 border-2 rounded">
 				<h2 class="text-2xl font-bold mb-4">Applications Overview</h2>
-				<p>View and manage all candidate applications across job postings.</p>
+				
+				<div class="mb-4">
+					<label class="mr-2">Filter by Status:</label>
+					<select onchange="filterApplications(this.value)" class="border p-2 rounded">
+						<option value="all">All Applications</option>
+						<option value="Submitted">Submitted</option>
+						<option value="Screening">Screening</option>
+						<option value="Interview">Interview</option>
+						<option value="Hired">Hired</option>
+						<option value="Rejected">Rejected</option>
+					</select>
+				</div>
+				
+				<table class="w-full border-collapse">
+					<thead>
+						<tr class="bg-gray-200">
+							<th class="border p-2 text-left">#</th>
+							<th class="border p-2 text-left">Candidate</th>
+							<th class="border p-2 text-left">Job Title</th>
+							<th class="border p-2 text-left">AI Score</th>
+							<th class="border p-2 text-left">Status</th>
+							<th class="border p-2 text-left">Applied On</th>
+							<th class="border p-2 text-left">Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:if="${applications.isEmpty()}">
+							<td colspan="7" class="border p-4 text-center text-gray-500">No applications received yet.</td>
+						</tr>
+						<tr th:each="app, iterStat : ${applications}" class="hover:bg-gray-50" th:attr="data-status=${app.status}">
+							<td class="border p-2" th:text="${iterStat.count}">1</td>
+							<td class="border p-2" th:text="${app.candidate?.username ?: 'N/A'}">Candidate</td>
+							<td class="border p-2" th:text="${app.jobPosting?.jobTitle ?: 'N/A'}">Job</td>
+							<td class="border p-2">
+								<span th:if="${app.aiScore != null}" th:text="${#numbers.formatDecimal(app.aiScore, 1, 2)} + '%'" class="font-semibold">Score</span>
+								<span th:unless="${app.aiScore != null}" class="text-gray-400">-</span>
+							</td>
+							<td class="border p-2">
+								<span th:class="'px-2 py-1 rounded text-white ' + ${app.status == 'Hired' ? 'bg-green-600' : (app.status == 'Rejected' ? 'bg-red-600' : (app.status == 'Interview' ? 'bg-blue-600' : 'bg-yellow-600'))}" 
+									th:text="${app.status}">Status</span>
+							</td>
+							<td class="border p-2" th:text="${app.appliedOn}">Date</td>
+							<td class="border p-2">
+								<form th:action="@{/admin/application/status/{id}(id=${app.applicationId})}" method="post" style="display:inline;">
+									<select name="status" class="border p-1 rounded text-sm" onchange="this.form.submit()">
+										<option value="" disabled selected>Change Status</option>
+										<option value="Screening">Screening</option>
+										<option value="Interview">Interview</option>
+										<option value="Hired">Hired</option>
+										<option value="Rejected">Rejected</option>
+									</select>
+								</form>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<script>
+				function filterApplications(status) {
+					const rows = document.querySelectorAll('tbody tr[data-status]');
+					rows.forEach(row => {
+						if (status === 'all' || row.getAttribute('data-status') === status) {
+							row.style.display = '';
+						} else {
+							row.style.display = 'none';
+						}
+					});
+				}
+				</script>
 			</div>
 			<div th:if="${recruiters}" class="w-3/4 h-auto p-5 border-2 rounded">
 				<h2 class="text-2xl font-bold mb-4">Recruiter Management</h2>
-				<p>Manage recruiter accounts and permissions.</p>
+				
+				<button onclick="document.getElementById('createRecruiterForm').classList.toggle('hidden')" 
+					class="bg-teal-700 text-white px-4 py-2 rounded mb-4 hover:bg-teal-800">+ Add New Recruiter</button>
+				
+				<div id="createRecruiterForm" class="hidden mb-6 p-4 border-2 rounded bg-gray-50">
+					<h3 class="text-lg font-semibold mb-3">Create Recruiter Account</h3>
+					<form th:action="@{/admin/recruiter/create}" method="post">
+						<div class="grid grid-cols-2 gap-4">
+							<input type="text" name="username" placeholder="Full Name" required class="border p-2 rounded" />
+							<input type="email" name="email" placeholder="Email" required class="border p-2 rounded" />
+						</div>
+						<div class="mt-4">
+							<button type="submit" class="bg-teal-700 text-white px-4 py-2 rounded hover:bg-teal-800">Create Recruiter</button>
+							<button type="button" onclick="document.getElementById('createRecruiterForm').classList.add('hidden')" 
+								class="bg-gray-500 text-white px-4 py-2 rounded ml-2 hover:bg-gray-600">Cancel</button>
+						</div>
+					</form>
+				</div>
+				
+				<table class="w-full border-collapse">
+					<thead>
+						<tr class="bg-gray-200">
+							<th class="border p-2 text-left">#</th>
+							<th class="border p-2 text-left">Name</th>
+							<th class="border p-2 text-left">Email</th>
+							<th class="border p-2 text-left">Status</th>
+							<th class="border p-2 text-left">Created On</th>
+							<th class="border p-2 text-left">Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:if="${recruiters.isEmpty()}">
+							<td colspan="6" class="border p-4 text-center text-gray-500">No recruiters found. Add one to get started.</td>
+						</tr>
+						<tr th:each="recruiter, iterStat : ${recruiters}" class="hover:bg-gray-50">
+							<td class="border p-2" th:text="${iterStat.count}">1</td>
+							<td class="border p-2" th:text="${recruiter.username}">Name</td>
+							<td class="border p-2" th:text="${recruiter.email}">Email</td>
+							<td class="border p-2">
+								<span th:if="${!recruiter.isLocked}" class="text-green-600 font-semibold">Active</span>
+								<span th:if="${recruiter.isLocked}" class="text-red-600 font-semibold">Locked</span>
+							</td>
+							<td class="border p-2" th:text="${recruiter.createdOn}">Date</td>
+							<td class="border p-2">
+								<form th:action="@{/admin/recruiter/toggle/{id}(id=${recruiter.userId})}" method="post" style="display:inline;">
+									<button type="submit" class="text-blue-600 hover:underline" th:text="${recruiter.isLocked} ? 'Unlock' : 'Lock'">Toggle</button>
+								</form>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 
 		</div>

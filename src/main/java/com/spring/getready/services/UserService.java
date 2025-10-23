@@ -97,4 +97,30 @@ public class UserService {
 		return result;
 	}
 
+	public UserDetail createRecruiter(String username, String email) throws Exception {
+		UserDetail existing = userDetailRepository.findByEmailEquals(email);
+		if (existing != null) {
+			throw new Exception("Email already exists");
+		}
+		
+		UserGroup recruiterGroup = userGroupRepository.findByShortGroupEquals("REC");
+		if (recruiterGroup == null) {
+			throw new Exception("Recruiter group not found");
+		}
+		
+		String password = passwordEncoder.encode(filePropertyConfig.getDefaultPassword());
+		UUID uuid = UUID.nameUUIDFromBytes(email.getBytes("utf-8"));
+		
+		UserDetail recruiter = new UserDetail();
+		recruiter.setUsername(username);
+		recruiter.setEmail(email);
+		recruiter.setPassword(password);
+		recruiter.setUserUuid(uuid.toString());
+		recruiter.setCreatedOn(new Timestamp(new Date().getTime()));
+		recruiter.setIsLocked(false);
+		recruiter.setUserGroup(recruiterGroup);
+		
+		return userDetailRepository.save(recruiter);
+	}
+
 }

@@ -23,11 +23,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.spring.getready.config.FilePropertyConfig;
 import com.spring.getready.interceptor.FileException;
+import com.spring.getready.model.Application;
 import com.spring.getready.model.AssignmentDetail;
 import com.spring.getready.model.CourseList;
 import com.spring.getready.model.JobPosting;
 import com.spring.getready.model.StaffDetail;
 import com.spring.getready.model.UserDetail;
+import com.spring.getready.repository.ApplicationRepository;
 import com.spring.getready.repository.AssignmentDetailRepository;
 import com.spring.getready.repository.CourseListRepository;
 import com.spring.getready.repository.JobPostingRepository;
@@ -56,6 +58,9 @@ public class AdminController {
 
 	@Autowired
 	private JobPostingRepository jobPostingRepository;
+
+	@Autowired
+	private ApplicationRepository applicationRepository;
 
 	@Autowired
 	private FilePropertyConfig filePropertyConfig;
@@ -90,9 +95,10 @@ public class AdminController {
 			List<JobPosting> jobPostings = jobPostingRepository.findAll();
 			model.addAttribute("jobs", jobPostings);
 		} else if (page.contentEquals("applications")) {
-			model.addAttribute("applications", true);
+			List<Application> applications = applicationRepository.findAll();
+			model.addAttribute("applications", applications);
 		} else if (page.contentEquals("recruiters")) {
-			List<UserDetail> recruiters = userDetailRepository.findByUserGroupShortGroupEquals("RECRUITER");
+			List<UserDetail> recruiters = userDetailRepository.findByUserGroupShortGroupEquals("REC");
 			model.addAttribute("recruiters", recruiters);
 		}
 		return "admin";
@@ -202,6 +208,44 @@ public class AdminController {
 			jobPostingRepository.save(job);
 		}
 		modelView.setViewName("redirect:/admin/jobs");
+		return modelView;
+	}
+
+	@RequestMapping(path = "/admin/application/status/{id}", method = RequestMethod.POST)
+	public ModelAndView updateApplicationStatus(@PathVariable Integer id, @RequestParam String status, ModelAndView modelView) {
+		Application application = applicationRepository.findById(id).orElse(null);
+		if (application != null) {
+			application.setStatus(status);
+			applicationRepository.save(application);
+		}
+		modelView.setViewName("redirect:/admin/applications");
+		return modelView;
+	}
+
+	@RequestMapping(path = "/admin/recruiter/create", method = RequestMethod.POST)
+	public ModelAndView createRecruiter(
+			@RequestParam String username,
+			@RequestParam String email,
+			ModelAndView modelView,
+			RedirectAttributes redirectAttributes) {
+		try {
+			userService.createRecruiter(username, email);
+			redirectAttributes.addFlashAttribute("message", "Recruiter created successfully");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Failed to create recruiter: " + e.getMessage());
+		}
+		modelView.setViewName("redirect:/admin/recruiters");
+		return modelView;
+	}
+
+	@RequestMapping(path = "/admin/recruiter/toggle/{id}", method = RequestMethod.POST)
+	public ModelAndView toggleRecruiterStatus(@PathVariable Integer id, ModelAndView modelView) {
+		UserDetail recruiter = userDetailRepository.findById(id).orElse(null);
+		if (recruiter != null) {
+			recruiter.setIsLocked(!recruiter.getIsLocked());
+			userDetailRepository.save(recruiter);
+		}
+		modelView.setViewName("redirect:/admin/recruiters");
 		return modelView;
 	}
 

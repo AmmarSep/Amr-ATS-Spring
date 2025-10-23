@@ -7,5 +7,5 @@ import com.spring.getready.model.UserGroup;
 
 @Repository
 public interface UserGroupRepository extends JpaRepository<UserGroup, Integer> {
-
+	UserGroup findByShortGroupEquals(String shortGroup);
 }
