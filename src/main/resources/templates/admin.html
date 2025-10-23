@@ -55,7 +55,65 @@
 			</div>
 			<div th:if="${jobs}" class="w-3/4 h-auto p-5 border-2 rounded">
 				<h2 class="text-2xl font-bold mb-4">Job Postings Management</h2>
-				<p>Manage job postings, create new positions, and track openings.</p>
+				
+				<button onclick="document.getElementById('createJobForm').classList.toggle('hidden')" 
+					class="bg-teal-700 text-white px-4 py-2 rounded mb-4 hover:bg-teal-800">+ Create New Job</button>
+				
+				<div id="createJobForm" class="hidden mb-6 p-4 border-2 rounded bg-gray-50">
+					<h3 class="text-lg font-semibold mb-3">Create Job Posting</h3>
+					<form th:action="@{/admin/job/create}" method="post">
+						<div class="grid grid-cols-2 gap-4">
+							<input type="text" name="jobTitle" placeholder="Job Title" required class="border p-2 rounded" />
+							<input type="text" name="location" placeholder="Location" required class="border p-2 rounded" />
+							<input type="text" name="jobType" placeholder="Job Type (e.g., Full-time)" required class="border p-2 rounded" />
+							<input type="text" name="experienceRequired" placeholder="Experience Required" required class="border p-2 rounded" />
+						</div>
+						<textarea name="jobDescription" placeholder="Job Description" required class="border p-2 rounded w-full mt-4" rows="3"></textarea>
+						<textarea name="requiredSkills" placeholder="Required Skills (comma separated)" required class="border p-2 rounded w-full mt-4" rows="2"></textarea>
+						<div class="mt-4">
+							<button type="submit" class="bg-teal-700 text-white px-4 py-2 rounded hover:bg-teal-800">Create Job</button>
+							<button type="button" onclick="document.getElementById('createJobForm').classList.add('hidden')" 
+								class="bg-gray-500 text-white px-4 py-2 rounded ml-2 hover:bg-gray-600">Cancel</button>
+						</div>
+					</form>
+				</div>
+				
+				<table class="w-full border-collapse">
+					<thead>
+						<tr class="bg-gray-200">
+							<th class="border p-2 text-left">#</th>
+							<th class="border p-2 text-left">Job Title</th>
+							<th class="border p-2 text-left">Location</th>
+							<th class="border p-2 text-left">Type</th>
+							<th class="border p-2 text-left">Status</th>
+							<th class="border p-2 text-left">Posted On</th>
+							<th class="border p-2 text-left">Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:if="${jobs.isEmpty()}">
+							<td colspan="7" class="border p-4 text-center text-gray-500">No job postings available. Create one to get started.</td>
+						</tr>
+						<tr th:each="job, iterStat : ${jobs}" class="hover:bg-gray-50">
+							<td class="border p-2" th:text="${iterStat.count}">1</td>
+							<td class="border p-2" th:text="${job.jobTitle}">Job Title</td>
+							<td class="border p-2" th:text="${job.location}">Location</td>
+							<td class="border p-2" th:text="${job.jobType}">Type</td>
+							<td class="border p-2">
+								<span th:if="${job.isActive}" class="text-green-600 font-semibold">Active</span>
+								<span th:unless="${job.isActive}" class="text-red-600 font-semibold">Inactive</span>
+							</td>
+							<td class="border p-2" th:text="${job.postedOn}">Date</td>
+							<td class="border p-2">
+								<form th:action="@{/admin/job/toggle/{id}(id=${job.jobId})}" method="post" style="display:inline;">
+									<button type="submit" class="text-blue-600 hover:underline" th:text="${job.isActive} ? 'Deactivate' : 'Activate'">Toggle</button>
+								</form>
+								<span class="mx-1">|</span>
+								<a th:href="@{/recruitment/job/{id}(id=${job.jobId})}" class="text-teal-600 hover:underline" target="_blank">View</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 			<div th:if="${applications}" class="w-3/4 h-auto p-5 border-2 rounded">
 				<h2 class="text-2xl font-bold mb-4">Applications Overview</h2>

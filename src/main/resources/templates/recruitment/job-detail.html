@@ -14,8 +14,8 @@
                 <p><strong>Location:</strong> <span th:text="${job.location}">Location</span></p>
                 <p><strong>Job Type:</strong> <span th:text="${job.jobType}">Type</span></p>
                 <p><strong>Experience Required:</strong> <span th:text="${job.experienceRequired}">Experience</span></p>
-                <p><strong>Posted On:</strong> <span th:text="${#temporals.format(job.postedOn, 'dd-MMM-yyyy')}">Date</span></p>
-                <p th:if="${job.deadline}"><strong>Application Deadline:</strong> <span th:text="${#temporals.format(job.deadline, 'dd-MMM-yyyy')}">Deadline</span></p>
+                <p th:if="${job.postedOn != null}"><strong>Posted On:</strong> <span th:text="${job.postedOn}">Date</span></p>
+                <p th:if="${job.deadline != null}"><strong>Application Deadline:</strong> <span th:text="${job.deadline}">Deadline</span></p>
             </div>
             
             <div class="job-description">

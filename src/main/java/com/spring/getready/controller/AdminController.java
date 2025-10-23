@@ -25,10 +25,12 @@ import com.spring.getready.config.FilePropertyConfig;
 import com.spring.getready.interceptor.FileException;
 import com.spring.getready.model.AssignmentDetail;
 import com.spring.getready.model.CourseList;
+import com.spring.getready.model.JobPosting;
 import com.spring.getready.model.StaffDetail;
 import com.spring.getready.model.UserDetail;
 import com.spring.getready.repository.AssignmentDetailRepository;
 import com.spring.getready.repository.CourseListRepository;
+import com.spring.getready.repository.JobPostingRepository;
 import com.spring.getready.repository.StaffDetailRepository;
 import com.spring.getready.repository.UserDetailRepository;
 import com.spring.getready.services.AssignmentService;
@@ -51,6 +53,9 @@ public class AdminController {
 
 	@Autowired
 	private AssignmentDetailRepository assignmentDetailRepository;
+
+	@Autowired
+	private JobPostingRepository jobPostingRepository;
 
 	@Autowired
 	private FilePropertyConfig filePropertyConfig;
@@ -82,7 +87,8 @@ public class AdminController {
 			List<UserDetail> userDetails = userDetailRepository.findByEmailNot("admin@spring.ats");
 			model.addAttribute("users", userDetails);
 		} else if (page.contentEquals("jobs")) {
-			model.addAttribute("jobs", true);
+			List<JobPosting> jobPostings = jobPostingRepository.findAll();
+			model.addAttribute("jobs", jobPostings);
 		} else if (page.contentEquals("applications")) {
 			model.addAttribute("applications", true);
 		} else if (page.contentEquals("recruiters")) {
@@ -157,6 +163,45 @@ public class AdminController {
 			assignmentService.createAssignment(assignment);
 		}
 		modelView.setViewName("redirect:/admin/assignment");
+		return modelView;
+	}
+
+	@RequestMapping(path = "/admin/job/create", method = RequestMethod.POST)
+	public ModelAndView createJob(
+			@RequestParam String jobTitle,
+			@RequestParam String location,
+			@RequestParam String jobType,
+			@RequestParam String experienceRequired,
+			@RequestParam String jobDescription,
+			@RequestParam String requiredSkills,
+			ModelAndView modelView) {
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		UserDetail userDetail = userDetailRepository.findByEmailEquals(username);
+		
+		JobPosting job = new JobPosting();
+		job.setJobTitle(jobTitle);
+		job.setLocation(location);
+		job.setJobType(jobType);
+		job.setExperienceRequired(experienceRequired);
+		job.setJobDescription(jobDescription);
+		job.setRequiredSkills(requiredSkills);
+		job.setPostedOn(new java.sql.Timestamp(System.currentTimeMillis()));
+		job.setIsActive(true);
+		job.setUserDetail(userDetail);
+		
+		jobPostingRepository.save(job);
+		modelView.setViewName("redirect:/admin/jobs");
+		return modelView;
+	}
+
+	@RequestMapping(path = "/admin/job/toggle/{id}", method = RequestMethod.POST)
+	public ModelAndView toggleJobStatus(@PathVariable Integer id, ModelAndView modelView) {
+		JobPosting job = jobPostingRepository.findById(id).orElse(null);
+		if (job != null) {
+			job.setIsActive(!job.getIsActive());
+			jobPostingRepository.save(job);
+		}
+		modelView.setViewName("redirect:/admin/jobs");
 		return modelView;
 	}
 
