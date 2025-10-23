@@ -160,15 +160,10 @@
 							</td>
 							<td class="border p-2" th:text="${app.appliedOn}">Date</td>
 							<td class="border p-2">
-								<form th:action="@{/admin/application/status/{id}(id=${app.applicationId})}" method="post" style="display:inline;">
-									<select name="status" class="border p-1 rounded text-sm" onchange="this.form.submit()">
-										<option value="" disabled selected>Change Status</option>
-										<option value="Screening">Screening</option>
-										<option value="Interview">Interview</option>
-										<option value="Hired">Hired</option>
-										<option value="Rejected">Rejected</option>
-									</select>
-								</form>
+								<a th:href="@{/admin/application/status/{id}(id=${app.applicationId},status='Screening')}" class="text-xs text-blue-600 hover:underline">Screen</a> |
+								<a th:href="@{/admin/application/status/{id}(id=${app.applicationId},status='Interview')}" class="text-xs text-blue-600 hover:underline">Interview</a> |
+								<a th:href="@{/admin/application/status/{id}(id=${app.applicationId},status='Hired')}" class="text-xs text-green-600 hover:underline">Hire</a> |
+								<a th:href="@{/admin/application/status/{id}(id=${app.applicationId},status='Rejected')}" class="text-xs text-red-600 hover:underline">Reject</a>
 							</td>
 						</tr>
 					</tbody>

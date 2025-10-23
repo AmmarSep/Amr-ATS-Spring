@@ -26,28 +26,28 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
 
 	protected void handleRedirects(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException {
-		boolean isUser = false;
-		boolean isAdmin = false;
 		String targetUrl = null;
 
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		for (GrantedAuthority grantedAuthority : authorities) {
-			if (grantedAuthority.getAuthority().equals("ROLE_USER")) {
-				isUser = true;
+			String role = grantedAuthority.getAuthority();
+			if (role.equals("ROLE_ADMIN")) {
+				targetUrl = "/admin";
 				break;
-			}
-			if (grantedAuthority.getAuthority().equals("ROLE_ADMIN")) {
-				isAdmin = true;
+			} else if (role.equals("ROLE_RECRUITER") || role.equals("ROLE_REC")) {
+				targetUrl = "/admin";
+				break;
+			} else if (role.equals("ROLE_CANDIDATE") || role.equals("ROLE_CAN")) {
+				targetUrl = "/recruitment/jobs";
+				break;
+			} else if (role.equals("ROLE_USER")) {
+				targetUrl = "/home";
 				break;
 			}
 		}
 
-		if (isUser) {
-			targetUrl = "/home";
-		} else if (isAdmin) {
-			targetUrl = "/admin";
-		} else {
-			targetUrl = "/error";
+		if (targetUrl == null) {
+			targetUrl = "/recruitment/jobs";
 		}
 
 		if (response.isCommitted()) {
