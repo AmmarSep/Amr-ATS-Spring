@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${job.jobTitle} + ' - Job Details'">Job Details</title>
+    <link rel="stylesheet" th:href="@{/public/assets/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <div class="job-detail">
+            <h1 th:text="${job.jobTitle}">Job Title</h1>
+            
+            <div class="job-info">
+                <p><strong>Location:</strong> <span th:text="${job.location}">Location</span></p>
+                <p><strong>Job Type:</strong> <span th:text="${job.jobType}">Type</span></p>
+                <p><strong>Experience Required:</strong> <span th:text="${job.experienceRequired}">Experience</span></p>
+                <p><strong>Posted On:</strong> <span th:text="${#temporals.format(job.postedOn, 'dd-MMM-yyyy')}">Date</span></p>
+                <p th:if="${job.deadline}"><strong>Application Deadline:</strong> <span th:text="${#temporals.format(job.deadline, 'dd-MMM-yyyy')}">Deadline</span></p>
+            </div>
+            
+            <div class="job-description">
+                <h3>Job Description</h3>
+                <p th:text="${job.jobDescription}">Description</p>
+            </div>
+            
+            <div class="job-skills">
+                <h3>Required Skills</h3>
+                <p th:text="${job.requiredSkills}">Skills</p>
+            </div>
+            
+            <div class="actions">
+                <a th:href="@{/recruitment/apply/{id}(id=${job.jobId})}" class="btn btn-success">Apply for this Position</a>
+                <a th:href="@{/recruitment/jobs}" class="btn btn-secondary">Back to Job List</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

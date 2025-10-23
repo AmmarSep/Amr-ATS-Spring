@@ -34,18 +34,18 @@
 					</li>
 					<li
 						class="p-4 border-2 border-white cursor-pointer rounded hover:font-medium"
-						th:classappend="${assignment} ? 'text-white bg-teal-700' :  'text-teal-700 hover:border-gray-300'">
-						<a th:href="@{/admin/assignment}">Assignment</a>
+						th:classappend="${jobs} ? 'text-white bg-teal-700' :  'text-teal-700 hover:border-gray-300'">
+						<a th:href="@{/admin/jobs}">Job Postings</a>
 					</li>
 					<li
 						class="p-4 border-2 border-white cursor-pointer rounded hover:font-medium"
-						th:classappend="${course} ? 'text-white bg-teal-700' :  'text-teal-700 hover:border-gray-300'">
-						<a th:href="@{/admin/course}">Courses</a>
+						th:classappend="${applications} ? 'text-white bg-teal-700' :  'text-teal-700 hover:border-gray-300'">
+						<a th:href="@{/admin/applications}">Applications</a>
 					</li>
 					<li
 						class="p-4 border-2 border-white cursor-pointer rounded hover:font-medium"
-						th:classappend="${staff} ? 'text-white bg-teal-700' :  'text-teal-700 hover:border-gray-300'">
-						<a th:href="@{/admin/staff}">Manage Staff</a>
+						th:classappend="${recruiters} ? 'text-white bg-teal-700' :  'text-teal-700 hover:border-gray-300'">
+						<a th:href="@{/admin/recruiters}">Manage Recruiters</a>
 					</li>
 				</ul>
 			</div>
@@ -53,14 +53,17 @@
 			<div th:if="${users}" class="w-3/4 h-auto p-5 border-2 rounded">
 				<div th:replace="fragments/admin/users :: all-users"></div>
 			</div>
-			<div th:if="${staff}" class="w-3/4 h-auto p-5 border-2 rounded">
-				<div th:replace="fragments/admin/staffs :: all-staffs"></div>
+			<div th:if="${jobs}" class="w-3/4 h-auto p-5 border-2 rounded">
+				<h2 class="text-2xl font-bold mb-4">Job Postings Management</h2>
+				<p>Manage job postings, create new positions, and track openings.</p>
 			</div>
-			<div th:if="${course}" class="w-3/4 h-auto p-5 border-2 rounded">
-				<div th:replace="fragments/admin/courses :: all-courses"></div>
+			<div th:if="${applications}" class="w-3/4 h-auto p-5 border-2 rounded">
+				<h2 class="text-2xl font-bold mb-4">Applications Overview</h2>
+				<p>View and manage all candidate applications across job postings.</p>
 			</div>
-			<div th:if="${assignment}" class="w-3/4 h-auto p-5 border-2 rounded">
-				<div th:replace="fragments/admin/assignments :: all-assignments"></div>
+			<div th:if="${recruiters}" class="w-3/4 h-auto p-5 border-2 rounded">
+				<h2 class="text-2xl font-bold mb-4">Recruiter Management</h2>
+				<p>Manage recruiter accounts and permissions.</p>
 			</div>
 
 		</div>

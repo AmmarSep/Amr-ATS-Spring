@@ -1,6 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <body>
-	<h1>Custom error page</h1>
+	<h1>Error Details</h1>
+	<p><strong>Status:</strong> <span th:text="${status}">Status</span></p>
+	<p><strong>Error:</strong> <span th:text="${error}">Error</span></p>
+	<p><strong>Message:</strong> <span th:text="${message}">Message</span></p>
+	<p><strong>Path:</strong> <span th:text="${path}">Path</span></p>
+	<p><strong>Timestamp:</strong> <span th:text="${timestamp}">Timestamp</span></p>
+	<div th:if="${trace}">
+		<h3>Stack Trace:</h3>
+		<pre th:text="${trace}">Stack trace</pre>
+	</div>
 </body>
 </html>

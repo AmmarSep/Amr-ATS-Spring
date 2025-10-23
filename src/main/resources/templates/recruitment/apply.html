@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Apply for Job - ATS</title>
+    <link rel="stylesheet" th:href="@{/public/assets/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <h1>Apply for: <span th:text="${job.jobTitle}">Job Title</span></h1>
+        
+        <form th:action="@{/recruitment/apply}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="jobRef" th:value="${job.jobId}">
+            
+            <div class="form-group">
+                <label>Upload Resume (PDF/DOC/DOCX)</label>
+                <input type="file" name="resume" accept=".pdf,.doc,.docx" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Cover Letter (Optional)</label>
+                <textarea name="notes" rows="6" placeholder="Tell us why you're a great fit for this role..."></textarea>
+            </div>
+            
+            <div class="actions">
+                <button type="submit" class="btn btn-success">Submit Application</button>
+                <a th:href="@{/recruitment/job/{id}(id=${job.jobId})}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

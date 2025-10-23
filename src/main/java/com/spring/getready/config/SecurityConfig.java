@@ -38,9 +38,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/home/**").hasRole("USER").antMatchers("/admin/**").hasRole("ADMIN").and()
-				.formLogin().loginPage("/login").successHandler(successHandler).permitAll().and().logout()
-				.clearAuthentication(true).invalidateHttpSession(true).deleteCookies("JSESSIONID").permitAll();
+		http.authorizeRequests()
+				.antMatchers("/admin/**").hasRole("ADMIN")
+				.antMatchers("/recruitment/**").hasAnyRole("ADMIN", "RECRUITER", "CANDIDATE", "USER")
+				.antMatchers("/home/**").hasAnyRole("USER", "CANDIDATE", "RECRUITER", "ADMIN")
+				.and()
+				.formLogin().loginPage("/login").successHandler(successHandler).permitAll()
+				.and()
+				.logout().clearAuthentication(true).invalidateHttpSession(true).deleteCookies("JSESSIONID").permitAll();
 	}
 
 	@Bean

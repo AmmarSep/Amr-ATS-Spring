@@ -16,4 +16,6 @@ public interface UserDetailRepository extends JpaRepository<UserDetail, Integer>
 	
 	UserDetail findByUserUuidEquals(String uuid);
 	
+	List<UserDetail> findByUserGroupShortGroupEquals(String shortGroup);
+	
 }

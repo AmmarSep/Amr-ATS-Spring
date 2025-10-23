@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Applications - ATS</title>
+    <link rel="stylesheet" th:href="@{/public/assets/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <h1>Applications for: <span th:text="${job.jobTitle}">Job Title</span></h1>
+        
+        <div class="applications-list">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Candidate</th>
+                        <th>Applied On</th>
+                        <th>AI Score</th>
+                        <th>Matched Skills</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="app : ${applications}">
+                        <td th:text="${app.candidate.firstName + ' ' + app.candidate.lastName}">Name</td>
+                        <td th:text="${#temporals.format(app.appliedOn, 'dd-MMM-yyyy')}">Date</td>
+                        <td>
+                            <span class="ai-score" th:classappend="${app.aiScore >= 70} ? 'high' : (${app.aiScore >= 50} ? 'medium' : 'low')">
+                                <span th:text="${app.aiScore}">Score</span>%
+                            </span>
+                        </td>
+                        <td th:text="${app.aiMatchKeywords}">Keywords</td>
+                        <td>
+                            <span class="status" th:text="${app.status}">Status</span>
+                        </td>
+                        <td>
+                            <a th:href="@{/recruitment/application/{id}(id=${app.applicationId})}" class="btn btn-sm">View</a>
+                            <a th:href="@{/download/resume/{id}(id=${app.resumeRef})}" class="btn btn-sm">Resume</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

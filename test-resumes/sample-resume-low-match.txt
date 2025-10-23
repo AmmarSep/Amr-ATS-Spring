@@ -1,0 +1,35 @@
+ALEX JOHNSON
+Frontend Developer
+Email: alex.johnson@email.com | Phone: +1-555-0789
+
+OBJECTIVE
+Frontend Developer seeking opportunities to work with modern web technologies and create engaging user interfaces.
+
+SKILLS
+- HTML5, CSS3, JavaScript
+- React, Angular, Vue.js
+- TypeScript
+- Bootstrap, Tailwind CSS
+- Git, npm
+- Responsive Design
+
+EXPERIENCE
+
+Frontend Developer | Creative Agency | 2022 - Present
+- Developed responsive websites using React and TypeScript
+- Implemented UI/UX designs from Figma mockups
+- Optimized web performance and accessibility
+- Collaborated with designers and backend developers
+
+Web Developer Intern | Digital Media Co. | 2021 - 2022
+- Created landing pages using HTML, CSS, and JavaScript
+- Fixed cross-browser compatibility issues
+- Assisted in website maintenance
+
+EDUCATION
+Bachelor of Arts in Web Design
+Design College | 2018 - 2022
+
+PORTFOLIO
+Portfolio website: alexjohnson.dev
+GitHub: github.com/alexjohnson

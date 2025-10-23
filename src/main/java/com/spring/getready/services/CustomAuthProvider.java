@@ -38,11 +38,18 @@ public class CustomAuthProvider implements AuthenticationProvider {
 
 		if (userDetail != null && passwordEncoder.matches(password, userDetail.getPassword())) {
 			List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-			if (userDetail.getUserGroup().getGroupName().equals("ADMIN")) {
+			String groupName = userDetail.getUserGroup().getGroupName();
+			
+			if (groupName.equals("ADMIN")) {
 				grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+			} else if (groupName.equals("RECRUITER") || groupName.equals("Recruiter")) {
+				grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_RECRUITER"));
+			} else if (groupName.equals("CANDIDATE") || groupName.equals("Candidate")) {
+				grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_CANDIDATE"));
 			} else {
 				grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 			}
+			
 			userDetail.setLastLoginOn(new Timestamp(new Date().getTime()));
 			userDetailRepository.save(userDetail);
 			return new UsernamePasswordAuthenticationToken(username, password, grantedAuthorities);

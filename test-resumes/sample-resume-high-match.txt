@@ -1,0 +1,47 @@
+JOHN DOE
+Senior Java Developer
+Email: john.doe@email.com | Phone: +1-555-0123
+LinkedIn: linkedin.com/in/johndoe
+
+PROFESSIONAL SUMMARY
+Experienced Senior Java Developer with 5+ years of expertise in building scalable enterprise applications using Spring Boot, Microservices architecture, and cloud technologies. Proven track record in designing and implementing REST APIs, working with PostgreSQL databases, and deploying applications using Docker and Kubernetes.
+
+TECHNICAL SKILLS
+- Programming Languages: Java, Python, JavaScript
+- Frameworks: Spring Boot, Spring MVC, Spring Security, Hibernate
+- Microservices: REST API, Spring Cloud, API Gateway
+- Databases: PostgreSQL, MySQL, MongoDB
+- DevOps: Docker, Kubernetes, Jenkins, Git
+- Cloud: AWS, Azure
+- Tools: Maven, Gradle, IntelliJ IDEA
+
+PROFESSIONAL EXPERIENCE
+
+Senior Java Developer | Tech Solutions Inc. | 2020 - Present
+- Developed and maintained microservices-based applications using Spring Boot
+- Designed and implemented RESTful APIs consumed by web and mobile applications
+- Worked extensively with PostgreSQL for database design and optimization
+- Deployed applications using Docker containers and Kubernetes orchestration
+- Led a team of 4 developers in delivering critical business features
+- Implemented CI/CD pipelines using Jenkins and GitLab
+
+Java Developer | Digital Innovations Ltd. | 2018 - 2020
+- Built enterprise applications using Java and Spring Framework
+- Developed REST APIs for integration with third-party systems
+- Managed PostgreSQL databases and wrote complex SQL queries
+- Collaborated with cross-functional teams in Agile environment
+- Participated in code reviews and mentored junior developers
+
+EDUCATION
+Bachelor of Science in Computer Science
+State University | 2014 - 2018
+
+CERTIFICATIONS
+- Oracle Certified Professional, Java SE 11 Developer
+- AWS Certified Developer - Associate
+- Certified Kubernetes Application Developer (CKAD)
+
+PROJECTS
+E-Commerce Platform: Developed a microservices-based e-commerce platform using Spring Boot, PostgreSQL, and Docker. Implemented payment gateway integration and order management system.
+
+Banking Application: Built a secure banking application with Spring Security, REST APIs, and PostgreSQL database. Deployed on Kubernetes cluster with high availability.

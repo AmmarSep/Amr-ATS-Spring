@@ -81,21 +81,13 @@ public class AdminController {
 		if (page.contentEquals("users")) {
 			List<UserDetail> userDetails = userDetailRepository.findByEmailNot("admin@spring.ats");
 			model.addAttribute("users", userDetails);
-		} else if (page.contentEquals("staff")) {
-			List<StaffDetail> staffDetails = staffDetailRepository.findAll();
-			model.addAttribute("staff", staffDetails);
-		} else if (page.contentEquals("course")) {
-			List<StaffDetail> staffDetails = staffDetailRepository.findAll();
-			model.addAttribute("staffDetails", staffDetails);
-			List<CourseList> courseDetails = courseListRepository.findAll();
-			model.addAttribute("course", courseDetails);
-		} else if (page.contentEquals("assignment")) {
-			List<StaffDetail> staffDetails = staffDetailRepository.findAll();
-			model.addAttribute("staffDetails", staffDetails);
-			List<CourseList> courseDetails = courseListRepository.findAll();
-			model.addAttribute("courseDetails", courseDetails);
-			List<AssignmentDetail> assignmentDetails = assignmentDetailRepository.findAll();
-			model.addAttribute("assignment", assignmentDetails);
+		} else if (page.contentEquals("jobs")) {
+			model.addAttribute("jobs", true);
+		} else if (page.contentEquals("applications")) {
+			model.addAttribute("applications", true);
+		} else if (page.contentEquals("recruiters")) {
+			List<UserDetail> recruiters = userDetailRepository.findByUserGroupShortGroupEquals("RECRUITER");
+			model.addAttribute("recruiters", recruiters);
 		}
 		return "admin";
 	}

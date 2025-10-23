@@ -1,0 +1,36 @@
+JANE SMITH
+Software Developer
+Email: jane.smith@email.com | Phone: +1-555-0456
+
+SUMMARY
+Software Developer with 3 years of experience in Java development and web applications. Skilled in Spring Framework, database management, and version control systems.
+
+SKILLS
+- Java, JavaScript, HTML, CSS
+- Spring Framework, Spring Boot
+- MySQL, SQL
+- Git, GitHub
+- REST API development
+- Agile methodologies
+
+WORK EXPERIENCE
+
+Software Developer | WebTech Solutions | 2021 - Present
+- Developed web applications using Java and Spring Boot
+- Created REST APIs for frontend integration
+- Worked with MySQL databases
+- Participated in daily standups and sprint planning
+- Fixed bugs and implemented new features
+
+Junior Developer | StartUp Tech | 2020 - 2021
+- Assisted in developing Java applications
+- Wrote unit tests using JUnit
+- Maintained documentation
+- Collaborated with team members
+
+EDUCATION
+Bachelor of Technology in Information Technology
+Tech Institute | 2016 - 2020
+
+PROJECTS
+Online Shopping Cart: Built a shopping cart application using Spring Boot and MySQL. Implemented user authentication and product catalog.
