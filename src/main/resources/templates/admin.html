@@ -115,7 +115,7 @@
 					</tbody>
 				</table>
 			</div>
-			<div th:if="${applications}" class="w-3/4 h-auto p-5 border-2 rounded">
+			<div th:if="${applications}" class="w-4/5 h-auto p-5 border-2 rounded">
 				<h2 class="text-2xl font-bold mb-4">Applications Overview</h2>
 				
 				<div class="mb-4">
@@ -155,15 +155,21 @@
 								<span th:unless="${app.aiScore != null}" class="text-gray-400">-</span>
 							</td>
 							<td class="border p-2">
-								<span th:class="'px-2 py-1 rounded text-white ' + ${app.status == 'Hired' ? 'bg-green-600' : (app.status == 'Rejected' ? 'bg-red-600' : (app.status == 'Interview' ? 'bg-blue-600' : 'bg-yellow-600'))}" 
+								<span th:class="'px-2 py-1 rounded text-white ' + ${app.status == 'Hired' ? 'bg-green-600' : (app.status == 'Rejected' ? 'bg-red-600' : (app.status == 'Interview' ? 'bg-purple-600' : (app.status == 'Screening' ? 'bg-yellow-600' : 'bg-blue-600')))}" 
 									th:text="${app.status}">Status</span>
 							</td>
 							<td class="border p-2" th:text="${app.appliedOn != null ? #dates.format(app.appliedOn, 'dd-MMM-yyyy') : 'N/A'}">Date</td>
 							<td class="border p-2">
-								<a th:href="@{/admin/application/status/{id}(id=${app.applicationId},status='Screening')}" class="text-xs text-blue-600 hover:underline">Screen</a> |
-								<a th:href="@{/admin/application/status/{id}(id=${app.applicationId},status='Interview')}" class="text-xs text-blue-600 hover:underline">Interview</a> |
-								<a th:href="@{/admin/application/status/{id}(id=${app.applicationId},status='Hired')}" class="text-xs text-green-600 hover:underline">Hire</a> |
-								<a th:href="@{/admin/application/status/{id}(id=${app.applicationId},status='Rejected')}" class="text-xs text-red-600 hover:underline">Reject</a>
+								<div class="flex flex-col gap-1">
+									<a th:href="@{/admin/application/status/{id}(id=${app.applicationId},status='Screening')}" 
+									   class="text-xs bg-yellow-600 text-white px-2 py-1 rounded hover:bg-yellow-700 text-center">Screen</a>
+									<a th:href="@{/admin/application/status/{id}(id=${app.applicationId},status='Interview')}" 
+									   class="text-xs bg-purple-500 text-white px-2 py-1 rounded hover:bg-purple-600 text-center">Interview</a>
+									<a th:href="@{/admin/application/status/{id}(id=${app.applicationId},status='Hired')}" 
+									   class="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 text-center">Hire</a>
+									<a th:href="@{/admin/application/status/{id}(id=${app.applicationId},status='Rejected')}" 
+									   class="text-xs bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 text-center">Reject</a>
+								</div>
 							</td>
 						</tr>
 					</tbody>
