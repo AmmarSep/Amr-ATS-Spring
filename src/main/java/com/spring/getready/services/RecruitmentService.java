@@ -40,6 +40,7 @@ public class RecruitmentService {
         application.setAiScore((Double) aiResult.get("score"));
         application.setAiMatchKeywords((String) aiResult.get("matchedSkills"));
         application.setStatus("Submitted");
+        application.setAppliedOn(new java.sql.Timestamp(System.currentTimeMillis()));
         
         return applicationRepository.save(application);
     }
