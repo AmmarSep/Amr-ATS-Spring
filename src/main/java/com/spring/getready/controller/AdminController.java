@@ -12,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -211,15 +213,16 @@ public class AdminController {
 		return modelView;
 	}
 
-	@RequestMapping(path = "/admin/application/status/{id}", method = RequestMethod.POST)
-	public ModelAndView updateApplicationStatus(@PathVariable Integer id, @RequestParam String status, ModelAndView modelView) {
-		Application application = applicationRepository.findById(id).orElse(null);
-		if (application != null) {
-			application.setStatus(status);
-			applicationRepository.save(application);
+	@GetMapping("/admin/application/status/{id}")
+	public String updateApplicationStatus(@PathVariable Integer id, @RequestParam(required = false) String status) {
+		if (status != null && !status.isEmpty()) {
+			Application application = applicationRepository.findById(id).orElse(null);
+			if (application != null) {
+				application.setStatus(status);
+				applicationRepository.save(application);
+			}
 		}
-		modelView.setViewName("redirect:/admin/applications");
-		return modelView;
+		return "redirect:/admin/applications";
 	}
 
 	@RequestMapping(path = "/admin/recruiter/create", method = RequestMethod.POST)
