@@ -38,16 +38,27 @@ public class CustomAuthProvider implements AuthenticationProvider {
 
 		if (userDetail != null && passwordEncoder.matches(password, userDetail.getPassword())) {
 			List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-			String groupName = userDetail.getUserGroup().getGroupName();
 			
-			if (groupName.equals("ADMIN")) {
+			// Check if user is admin@spring.ats
+			if (username.equals("admin@spring.ats")) {
 				grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-			} else if (groupName.equals("RECRUITER") || groupName.equals("Recruiter")) {
-				grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_RECRUITER"));
-			} else if (groupName.equals("CANDIDATE") || groupName.equals("Candidate")) {
+			} 
+			// All other @ats.com users get CANDIDATE role
+			else if (username.endsWith("@ats.com")) {
 				grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_CANDIDATE"));
-			} else {
-				grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+			} 
+			// Fallback to group-based roles for other domains
+			else {
+				String groupName = userDetail.getUserGroup().getGroupName();
+				if (groupName.equals("ADMIN")) {
+					grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+				} else if (groupName.equals("RECRUITER") || groupName.equals("Recruiter")) {
+					grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_RECRUITER"));
+				} else if (groupName.equals("CANDIDATE") || groupName.equals("Candidate")) {
+					grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_CANDIDATE"));
+				} else {
+					grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+				}
 			}
 			
 			userDetail.setLastLoginOn(new Timestamp(new Date().getTime()));

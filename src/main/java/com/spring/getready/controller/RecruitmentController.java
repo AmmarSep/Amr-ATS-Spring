@@ -3,9 +3,11 @@ package com.spring.getready.controller;
 import com.spring.getready.model.Application;
 import com.spring.getready.model.JobPosting;
 import com.spring.getready.model.UploadFile;
+import com.spring.getready.model.UserDetail;
 import com.spring.getready.services.RecruitmentService;
 import com.spring.getready.services.UploadFileService;
 import com.spring.getready.repository.JobPostingRepository;
+import com.spring.getready.repository.UserDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -27,6 +29,9 @@ public class RecruitmentController {
 
     @Autowired
     private UploadFileService uploadFileService;
+
+    @Autowired
+    private UserDetailRepository userDetailRepository;
 
     @GetMapping("/jobs")
     public String listJobs(Model model) {
@@ -67,8 +72,11 @@ public class RecruitmentController {
             UploadFile uploadedResume = uploadFileService.saveFile(resume, auth.getName());
             String resumeText = uploadFileService.extractTextFromFile(uploadedResume);
             
+            UserDetail candidate = userDetailRepository.findByEmailEquals(auth.getName());
+            
             Application application = new Application();
             application.setJobPosting(jobPostingRepository.findById(jobRef).orElse(null));
+            application.setCandidate(candidate);
             application.setResume(uploadedResume);
             application.setNotes(notes);
             
