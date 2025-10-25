@@ -3,34 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <title>Job Openings - ATS</title>
-    <link rel="stylesheet" th:href="@{/public/assets/css/style.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Available Job Openings</h1>
-        
-        <div class="job-list">
-            <div th:if="${jobs.isEmpty()}" class="no-jobs">
-                <p>No active job postings available at the moment.</p>
-            </div>
-            
-            <div th:each="job : ${jobs}" class="job-card">
-                <h3 th:text="${job.jobTitle}">Job Title</h3>
-                <p class="job-meta">
-                    <span th:text="${job.location}">Location</span> | 
-                    <span th:text="${job.jobType}">Job Type</span> | 
-                    <span th:text="${job.experienceRequired}">Experience</span>
-                </p>
-                <p class="job-description" th:text="${job.jobDescription}">Description</p>
-                <p class="job-skills"><strong>Required Skills:</strong> <span th:text="${job.requiredSkills}">Skills</span></p>
-                <p class="job-posted" th:if="${job.postedOn != null}">Posted: <span th:text="${job.postedOn}">Date</span></p>
-                
-                <div class="job-actions">
-                    <a th:href="@{/recruitment/job/{id}(id=${job.jobId})}" class="btn btn-primary">View Details</a>
-                    <a th:href="@{/recruitment/apply/{id}(id=${job.jobId})}" class="btn btn-success">Apply Now</a>
+    <div class="job-page-container">
+        <!-- Navigation Bar -->
+        <nav class="top-navigation">
+            <div class="nav-container">
+                <div class="nav-buttons">
+                    <span class="user-greeting nav-btn">
+                        <i class="fas fa-user"></i>
+                        <span th:text="${username}">User Name</span>
+                    </span>
+                    <a href="/ats/logout" class="btn btn-secondary nav-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Log Out
+                    </a>
                 </div>
             </div>
-        </div>
+        </nav>
+        
+        <header class="page-header">
+            <div class="header-content">
+                <h1 class="page-title">
+                    <i class="fas fa-briefcase"></i>
+                    Current Job Openings
+                </h1>
+                <p class="page-subtitle">Join our team and grow your career with us</p>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="jobs-container">
+                <div th:if="${jobs.isEmpty()}" class="no-jobs-message">
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>No Active Positions</h3>
+                        <p>We currently don't have any open positions, but check back soon for new opportunities!</p>
+                    </div>
+                </div>
+                
+                <div class="jobs-grid">
+                    <article th:each="job : ${jobs}" class="job-card">
+                        <div class="job-card-header">
+                            <h2 class="job-title" th:text="${job.jobTitle}">Job Title</h2>
+                            <div class="job-meta-badges">
+                                <span class="badge badge-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span th:text="${job.location}">Location</span>
+                                </span>
+                                <span class="badge badge-type">
+                                    <i class="fas fa-clock"></i>
+                                    <span th:text="${job.jobType}">Job Type</span>
+                                </span>
+                                <span class="badge badge-experience">
+                                    <i class="fas fa-user-tie"></i>
+                                    <span th:text="${job.experienceRequired}">Experience</span>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="job-card-body">
+                            <div class="job-section">
+                                <h4 class="section-title">Role Overview</h4>
+                                <p class="job-description" th:text="${job.jobDescription}">Description</p>
+                            </div>
+                            
+                            <div class="job-section">
+                                <h4 class="section-title">Required Skills</h4>
+                                <div class="skills-container">
+                                    <span class="skill-tag" th:text="${job.requiredSkills}">Skills</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="job-card-footer">
+                            <div class="job-posted-info" th:if="${job.postedOn != null}">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Posted on <span th:text="${job.postedOn}">Date</span></span>
+                            </div>
+                            
+                            <div class="job-actions">
+                                <a th:href="@{/recruitment/job/{id}(id=${job.jobId})}" class="btn btn-secondary">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </a>
+                                <a th:href="@{/recruitment/apply/{id}(id=${job.jobId})}" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane"></i>
+                                    Apply Now
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </main>
     </div>
+
+    <!-- Success message popup -->
+    <div th:if="${success}" style="display: none;" id="successMessage" th:text="${success}"></div>
+
+    <script>
+        // Check for success message and show popup
+        document.addEventListener('DOMContentLoaded', function() {
+            const successElement = document.getElementById('successMessage');
+            if (successElement && successElement.textContent.trim()) {
+                showSuccessPopup();
+            }
+        });
+
+        function showSuccessPopup() {
+            // Create popup overlay
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+
+            // Create popup content
+            const popup = document.createElement('div');
+            popup.style.cssText = `
+                background: white;
+                border-radius: 16px;
+                padding: 2rem;
+                max-width: 450px;
+                text-align: center;
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+                animation: popupSlideIn 0.3s ease-out;
+                margin: 1rem;
+            `;
+
+            popup.innerHTML = `
+                <div style="color: #10b981; font-size: 4rem; margin-bottom: 1.5rem;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2 style="color: #1a202c; margin-bottom: 1rem; font-size: 1.75rem; font-weight: 700;">
+                    Application Submitted Successfully!
+                </h2>
+                <p style="color: #6b7280; margin-bottom: 2rem; line-height: 1.6; font-size: 1rem;">
+                    Your application has been submitted and our AI will screen your resume. 
+                    You'll be notified about the next steps soon.
+                </p>
+                <div style="display: flex; gap: 1rem; justify-content: center;">
+                    <button onclick="closeSuccessPopup()" style="
+                        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+                        color: white;
+                        border: none;
+                        padding: 0.75rem 2rem;
+                        border-radius: 8px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: transform 0.2s;
+                        font-size: 0.95rem;
+                    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <i class="fas fa-check" style="margin-right: 0.5rem;"></i>
+                        Got it!
+                    </button>
+                </div>
+            `;
+
+            // Add animation keyframes
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes popupSlideIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-30px) scale(0.95);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                    }
+                }
+                @keyframes popupSlideOut {
+                    from {
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                    }
+                    to {
+                        opacity: 0;
+                        transform: translateY(-30px) scale(0.95);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+
+            overlay.appendChild(popup);
+            document.body.appendChild(overlay);
+
+            // Make close function globally available
+            window.closeSuccessPopup = function() {
+                popup.style.animation = 'popupSlideOut 0.3s ease-out';
+                setTimeout(() => {
+                    if (document.body.contains(overlay)) {
+                        document.body.removeChild(overlay);
+                    }
+                }, 300);
+            };
+
+            // Close on overlay click
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) {
+                    closeSuccessPopup();
+                }
+            });
+
+            // Close on ESC key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeSuccessPopup();
+                }
+            });
+        }
+    </script>
 </body>
 </html>

@@ -2,31 +2,543 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apply for Job - ATS</title>
-    <link rel="stylesheet" th:href="@{/public/assets/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #1a202c;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .application-container {
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .application-wrapper {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .application-header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: white;
+        }
+
+        .job-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .company-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .company-badge {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .progress-indicator {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+        }
+
+        .application-body {
+            padding: 2.5rem;
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        .simple-upload-container {
+            margin-bottom: 1rem;
+        }
+
+        .simple-file-input {
+            display: none;
+        }
+
+        .simple-upload-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-decoration: none;
+        }
+
+        .simple-upload-button:hover {
+            background: #4338ca;
+        }
+
+        .upload-hint {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+        }
+
+        .selected-file-info {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #dcfdf7;
+            border: 1px solid #10b981;
+            border-radius: 8px;
+        }
+
+        .file-details {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .file-icon {
+            color: #059669;
+            font-size: 1.5rem;
+        }
+
+        .file-text {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: #047857;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-size {
+            font-size: 0.875rem;
+            color: #065f46;
+        }
+
+        .remove-file-btn {
+            background: none;
+            border: none;
+            color: #dc2626;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .remove-file-btn:hover {
+            background-color: rgba(220, 38, 38, 0.1);
+        }
+
+        .textarea-wrapper {
+            position: relative;
+        }
+
+        .form-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.875rem;
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .char-counter {
+            position: absolute;
+            bottom: 0.75rem;
+            right: 1rem;
+            font-size: 0.75rem;
+            color: #9ca3af;
+            background: white;
+            padding: 0 0.25rem;
+        }
+
+        .privacy-notice {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            color: #92400e;
+            margin-bottom: 2rem;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-cancel {
+            color: #6b7280;
+            background: transparent;
+        }
+
+        .btn-cancel:hover {
+            color: #374151;
+            background: #f3f4f6;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            min-width: 180px;
+            justify-content: center;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .time-estimate {
+            font-size: 0.875rem;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .application-container {
+                padding: 1rem;
+            }
+
+            .application-header {
+                padding: 1.5rem;
+            }
+
+            .job-title {
+                font-size: 1.5rem;
+            }
+
+            .company-info {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .application-body {
+                padding: 1.5rem;
+            }
+
+            .file-upload-zone {
+                padding: 2rem 1rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .btn {
+                text-align: center;
+                justify-content: center;
+            }
+
+            .time-estimate {
+                order: -1;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .application-container {
+                padding: 0.5rem;
+            }
+
+            .file-upload-icon {
+                font-size: 2rem;
+            }
+
+            .file-upload-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Apply for: <span th:text="${job.jobTitle}">Job Title</span></h1>
-        
-        <form th:action="@{/recruitment/apply}" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="jobRef" th:value="${job.jobId}">
-            
-            <div class="form-group">
-                <label>Upload Resume (PDF/DOC/DOCX)</label>
-                <input type="file" name="resume" accept=".pdf,.doc,.docx" required>
+    <div class="application-container">
+        <div class="application-wrapper">
+            <div class="application-header">
+                <a th:href="@{/recruitment/job/{id}(id=${job.jobId})}" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Job Details
+                </a>
+                
+                <h1 class="job-title">Apply for: <span th:text="${job.jobTitle}">Junior Java Developer</span></h1>
+                
+                <div class="company-info">
+                    <div class="company-badge">
+                        <i class="fas fa-building"></i>
+                        TechCorp Inc.
+                    </div>
+                    <div class="company-badge">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span th:text="${job.location ?: 'Bangalore, India'}">Bangalore, India</span>
+                    </div>
+                    <div class="company-badge">
+                        <i class="fas fa-briefcase"></i>
+                        <span th:text="${job.jobType ?: 'Full-time'}">Full-time</span>
+                    </div>
+                </div>
+                
+                <div class="progress-indicator">
+                    Step 1 of 1 - Application Submission
+                </div>
             </div>
-            
-            <div class="form-group">
-                <label>Cover Letter (Optional)</label>
-                <textarea name="notes" rows="6" placeholder="Tell us why you're a great fit for this role..."></textarea>
+
+            <div class="application-body">
+                <form th:action="@{/recruitment/apply}" method="post" enctype="multipart/form-data" id="applicationForm">
+                    <input type="hidden" name="jobRef" th:value="${job.jobId}">
+                    
+                    <div class="form-group">
+                        <h2 class="section-title">
+                            <i class="fas fa-file-upload"></i>
+                            Resume Upload
+                        </h2>
+                        <label class="form-label">
+                            Upload your resume <span class="required">*</span>
+                        </label>
+                        
+                        <div class="simple-upload-container">
+                            <input type="file" name="resume" accept=".pdf,.doc,.docx" required id="resumeInput" class="simple-file-input">
+                            <label for="resumeInput" class="simple-upload-button">
+                                <i class="fas fa-upload"></i>
+                                Choose Resume File
+                            </label>
+                            <div class="upload-hint">PDF, DOC, DOCX • Max 5MB</div>
+                        </div>
+                        
+                        <div class="selected-file-info" id="selectedFileInfo" style="display: none;">
+                            <div class="file-details">
+                                <i class="fas fa-file-alt file-icon"></i>
+                                <div class="file-text">
+                                    <div class="file-name" id="fileName"></div>
+                                    <div class="file-size" id="fileSize"></div>
+                                </div>
+                                <button type="button" class="remove-file-btn" id="removeFile">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <h2 class="section-title">
+                            <i class="fas fa-edit"></i>
+                            Cover Letter
+                        </h2>
+                        <label class="form-label">
+                            Why are you perfect for this role? (Optional)
+                        </label>
+                        
+                        <div class="textarea-wrapper">
+                            <textarea 
+                                name="notes" 
+                                class="form-textarea" 
+                                placeholder="Tell us about your relevant experience, skills, and what excites you about this opportunity. Be specific about how you can contribute to our team..."
+                                maxlength="500"
+                                id="coverLetter"></textarea>
+                            <div class="char-counter">
+                                <span id="charCount">0</span>/500
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="privacy-notice">
+                        <i class="fas fa-shield-alt"></i>
+                        Your information is secure and confidential. We respect your privacy.
+                    </div>
+                    
+                    <div class="form-actions">
+                        <div class="time-estimate">
+                            <i class="fas fa-clock"></i>
+                            Takes ~3 minutes
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem;">
+                            <a th:href="@{/recruitment/job/{id}(id=${job.jobId})}" class="btn btn-cancel">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-submit" id="submitBtn">
+                                <i class="fas fa-paper-plane"></i>
+                                Submit Application
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
-            
-            <div class="actions">
-                <button type="submit" class="btn btn-success">Submit Application</button>
-                <a th:href="@{/recruitment/job/{id}(id=${job.jobId})}" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
+        </div>
     </div>
+
+    <script>
+        // Super simple file upload - no complex logic
+        const fileInput = document.getElementById('resumeInput');
+        const selectedFileInfo = document.getElementById('selectedFileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const removeFile = document.getElementById('removeFile');
+        
+        // Character counter
+        const coverLetter = document.getElementById('coverLetter');
+        const charCount = document.getElementById('charCount');
+        
+        // Submit button
+        const submitBtn = document.getElementById('submitBtn');
+
+
+        // Handle file selection - this is the ONLY event we need
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                const file = this.files[0];
+                fileName.textContent = file.name;
+                fileSize.textContent = `${(file.size / 1024 / 1024).toFixed(1)} MB`;
+                selectedFileInfo.style.display = 'block';
+            }
+        });
+        
+        // Handle remove file
+        removeFile.addEventListener('click', function() {
+            fileInput.value = '';
+            selectedFileInfo.style.display = 'none';
+        });
+
+        // Character counter
+        coverLetter.addEventListener('input', () => {
+            const count = coverLetter.value.length;
+            charCount.textContent = count;
+            charCount.style.color = count > 450 ? '#ef4444' : '#9ca3af';
+        });
+
+        // Form submission
+        let isSubmitting = false;
+        document.getElementById('applicationForm').addEventListener('submit', (e) => {
+            // Prevent double submission
+            if (isSubmitting) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Check if file is selected
+            if (!fileInput.files || fileInput.files.length === 0) {
+                e.preventDefault();
+                alert('Please select a resume file before submitting.');
+                return false;
+            }
+            
+            // Mark as submitting and disable button
+            isSubmitting = true;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+        });
+    </script>
 </body>
 </html>

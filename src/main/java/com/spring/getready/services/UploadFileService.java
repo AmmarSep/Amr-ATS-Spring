@@ -54,10 +54,19 @@ public class UploadFileService {
 	public String extractTextFromFile(UploadFile uploadFile) {
 		try {
 			Path filePath = Paths.get(uploadPath, uploadFile.getFileName());
-			String content = new String(Files.readAllBytes(filePath));
-			return content;
+			String fileName = uploadFile.getFileName().toLowerCase();
+			
+			if (fileName.endsWith(".pdf")) {
+				return "PDF text extraction placeholder - " + uploadFile.getFileOriginalName();
+			} else if (fileName.endsWith(".doc") || fileName.endsWith(".docx")) {
+				return "DOC/DOCX text extraction placeholder - " + uploadFile.getFileOriginalName();
+			} else if (fileName.endsWith(".txt")) {
+				return new String(Files.readAllBytes(filePath));
+			} else {
+				return "Unsupported file format - " + uploadFile.getFileOriginalName();
+			}
 		} catch (IOException e) {
-			return "";
+			return "Error reading file - " + uploadFile.getFileOriginalName();
 		}
 	}
 
