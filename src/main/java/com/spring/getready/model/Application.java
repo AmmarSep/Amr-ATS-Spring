@@ -3,6 +3,8 @@ package com.spring.getready.model;
 import java.io.Serializable;
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.sql.Date;
+import java.sql.Time;
 
 @Entity
 @Table(name="applications")
@@ -41,6 +43,18 @@ public class Application implements Serializable {
     @Column(name="interview_scheduled_on")
     private Timestamp interviewScheduledOn;
 
+    @Column(name="interview_date")
+    private Date interviewDate;
+
+    @Column(name="interview_time")
+    private Time interviewTime;
+
+    @Column(name="interviewer_name")
+    private String interviewerName;
+
+    @Column(name="interview_location")
+    private String interviewLocation;
+
     @Column(name="notes", columnDefinition="TEXT")
     private String notes;
 
@@ -75,4 +89,16 @@ public class Application implements Serializable {
 
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
+
+    public Date getInterviewDate() { return interviewDate; }
+    public void setInterviewDate(Date interviewDate) { this.interviewDate = interviewDate; }
+
+    public Time getInterviewTime() { return interviewTime; }
+    public void setInterviewTime(Time interviewTime) { this.interviewTime = interviewTime; }
+
+    public String getInterviewerName() { return interviewerName; }
+    public void setInterviewerName(String interviewerName) { this.interviewerName = interviewerName; }
+
+    public String getInterviewLocation() { return interviewLocation; }
+    public void setInterviewLocation(String interviewLocation) { this.interviewLocation = interviewLocation; }
 }

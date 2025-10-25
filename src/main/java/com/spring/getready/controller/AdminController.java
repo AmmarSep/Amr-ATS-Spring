@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
+import java.sql.Time;
+import java.text.SimpleDateFormat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -97,8 +99,14 @@ public class AdminController {
 			List<JobPosting> jobPostings = jobPostingRepository.findAll();
 			model.addAttribute("jobs", jobPostings);
 		} else if (page.contentEquals("applications")) {
-			List<Application> applications = applicationRepository.findAll();
+			List<Application> applications = applicationRepository.findAllWithResumeAndDetails();
 			model.addAttribute("applications", applications);
+		} else if (page.contentEquals("hired-candidates")) {
+			List<Application> hiredCandidates = applicationRepository.findByStatusWithResumeAndDetails("Hired");
+			model.addAttribute("hiredCandidates", hiredCandidates);
+		} else if (page.contentEquals("interview-scheduled")) {
+			List<Application> interviewScheduledCandidates = applicationRepository.findByStatusWithResumeAndDetails("Interview");
+			model.addAttribute("interviewScheduledCandidates", interviewScheduledCandidates);
 		} else if (page.contentEquals("recruiters")) {
 			List<UserDetail> recruiters = userDetailRepository.findByUserGroupShortGroupEquals("REC");
 			model.addAttribute("recruiters", recruiters);
@@ -249,6 +257,97 @@ public class AdminController {
 			userDetailRepository.save(recruiter);
 		}
 		modelView.setViewName("redirect:/admin/recruiters");
+		return modelView;
+	}
+
+	@PostMapping("/admin/interview/schedule/{applicationId}")
+	public ModelAndView scheduleInterview(
+			@PathVariable Integer applicationId,
+			@RequestParam String interviewDate,
+			@RequestParam String interviewTime,
+			@RequestParam(required = false) String interviewerName,
+			@RequestParam(required = false) String interviewLocation,
+			ModelAndView modelView,
+			RedirectAttributes redirectAttributes) {
+		try {
+			Application application = applicationRepository.findById(applicationId).orElse(null);
+			if (application != null) {
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+				
+				application.setInterviewDate(new java.sql.Date(dateFormat.parse(interviewDate).getTime()));
+				application.setInterviewTime(new Time(timeFormat.parse(interviewTime).getTime()));
+				application.setInterviewerName(interviewerName);
+				application.setInterviewLocation(interviewLocation);
+				application.setInterviewScheduledOn(new java.sql.Timestamp(System.currentTimeMillis()));
+				
+				applicationRepository.save(application);
+				redirectAttributes.addFlashAttribute("message", "Interview scheduled successfully");
+			} else {
+				redirectAttributes.addFlashAttribute("error", "Application not found");
+			}
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Error scheduling interview: " + e.getMessage());
+		}
+		modelView.setViewName("redirect:/admin/interview-scheduled");
+		return modelView;
+	}
+
+	@PostMapping("/admin/interview/update/{applicationId}")
+	public ModelAndView updateInterview(
+			@PathVariable Integer applicationId,
+			@RequestParam String interviewDate,
+			@RequestParam String interviewTime,
+			@RequestParam(required = false) String interviewerName,
+			@RequestParam(required = false) String interviewLocation,
+			ModelAndView modelView,
+			RedirectAttributes redirectAttributes) {
+		try {
+			Application application = applicationRepository.findById(applicationId).orElse(null);
+			if (application != null) {
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+				
+				application.setInterviewDate(new java.sql.Date(dateFormat.parse(interviewDate).getTime()));
+				application.setInterviewTime(new Time(timeFormat.parse(interviewTime).getTime()));
+				application.setInterviewerName(interviewerName);
+				application.setInterviewLocation(interviewLocation);
+				
+				applicationRepository.save(application);
+				redirectAttributes.addFlashAttribute("message", "Interview updated successfully");
+			} else {
+				redirectAttributes.addFlashAttribute("error", "Application not found");
+			}
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Error updating interview: " + e.getMessage());
+		}
+		modelView.setViewName("redirect:/admin/interview-scheduled");
+		return modelView;
+	}
+
+	@PostMapping("/admin/interview/cancel/{applicationId}")
+	public ModelAndView cancelInterview(
+			@PathVariable Integer applicationId,
+			ModelAndView modelView,
+			RedirectAttributes redirectAttributes) {
+		try {
+			Application application = applicationRepository.findById(applicationId).orElse(null);
+			if (application != null) {
+				application.setInterviewDate(null);
+				application.setInterviewTime(null);
+				application.setInterviewerName(null);
+				application.setInterviewLocation(null);
+				application.setInterviewScheduledOn(null);
+				
+				applicationRepository.save(application);
+				redirectAttributes.addFlashAttribute("message", "Interview cancelled successfully");
+			} else {
+				redirectAttributes.addFlashAttribute("error", "Application not found");
+			}
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Error cancelling interview: " + e.getMessage());
+		}
+		modelView.setViewName("redirect:/admin/interview-scheduled");
 		return modelView;
 	}
 

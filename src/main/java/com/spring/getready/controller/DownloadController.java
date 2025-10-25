@@ -74,4 +74,42 @@ public class DownloadController {
 		}
 	}
 
+	@RequestMapping(path = "/view/attachment", method = RequestMethod.GET)
+	public ResponseEntity<byte[]> viewFile(@RequestParam("id") Integer id, HttpServletRequest request)
+			throws FileNotFoundException, IOException {
+		InputStreamResource streamResource = null;
+		String contentType = "application/pdf"; // Default to PDF
+
+		try {
+			Optional<UploadFile> referenceFile = uploadFileRepository.findById(id);
+			if (referenceFile.isPresent()) {
+				File viewFile = new File(
+						filePropertyConfig.getFilePath() + File.separator + referenceFile.get().getFileName());
+				streamResource = new InputStreamResource(new FileInputStream(viewFile));
+				
+				// Determine content type based on file extension
+				String fileName = referenceFile.get().getFileOriginalName().toLowerCase();
+				if (fileName.endsWith(".pdf")) {
+					contentType = "application/pdf";
+				} else if (fileName.endsWith(".doc") || fileName.endsWith(".docx")) {
+					contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+				} else if (fileName.endsWith(".txt")) {
+					contentType = "text/plain";
+				}
+			}
+		} catch (IOException ex) {
+			System.out.println("Could not determine file type.");
+		}
+
+		if (streamResource == null) {
+			String errorResponse = new String("{\"message\" : \"File not found\"}");
+			return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(errorResponse.getBytes());
+		} else {
+			return ResponseEntity.ok()
+					.contentType(MediaType.parseMediaType(contentType))
+					.header(HttpHeaders.CONTENT_DISPOSITION, "inline")
+					.body(streamResource.getInputStream().readAllBytes());
+		}
+	}
+
 }
