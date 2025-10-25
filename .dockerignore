@@ -1,0 +1,26 @@
+# Ignore target directory (will be built inside container)
+target/
+
+# Ignore IDE files
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Ignore git
+.git/
+.gitignore
+
+# Ignore documentation
+*.md
+docs/
+
+# Ignore local files
+*.log
+*.tmp
+
+# Ignore test files
+src/test/
+
+# Ignore Railway files
+railway.json

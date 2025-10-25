@@ -8,16 +8,13 @@
 
 ### 1. Push Code to GitHub
 ```bash
-# Initialize git (if not already done)
-git init
+# Add the latest changes
 git add .
-git commit -m "Initial commit for Railway deployment"
-
-# Create a new repository on GitHub and push
-git remote add origin https://github.com/YOUR_USERNAME/spring-ats.git
-git branch -M main
-git push -u origin main
+git commit -m "Fix Railway build configuration with multi-stage Dockerfile"
+git push origin master
 ```
+
+> **Note**: If you haven't pushed to GitHub yet, create a new repository first and push all your code.
 
 ### 2. Set Up Railway Project
 1. Go to [railway.app](https://railway.app) and sign in
