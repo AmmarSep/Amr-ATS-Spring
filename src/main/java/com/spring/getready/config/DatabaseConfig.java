@@ -2,7 +2,6 @@ package com.spring.getready.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -15,12 +14,33 @@ import java.net.URISyntaxException;
 @Profile("prod")
 public class DatabaseConfig {
 
-    @Value("${DATABASE_URL:}")
-    private String databaseUrl;
-
     @Bean
     public DataSource dataSource() {
         HikariConfig config = new HikariConfig();
+        
+        // Try different environment variable names that Railway might use
+        String databaseUrl = System.getenv("DATABASE_URL");
+        if (databaseUrl == null || databaseUrl.isEmpty()) {
+            databaseUrl = System.getenv("POSTGRES_URL");
+        }
+        if (databaseUrl == null || databaseUrl.isEmpty()) {
+            databaseUrl = System.getenv("POSTGRESQL_URL");
+        }
+        
+        // Print all environment variables for debugging
+        System.out.println("=== Environment Variables Debug ===");
+        System.getenv().entrySet().stream()
+            .filter(entry -> entry.getKey().contains("DATABASE") || 
+                           entry.getKey().contains("POSTGRES") || 
+                           entry.getKey().contains("PG"))
+            .forEach(entry -> {
+                String value = entry.getValue();
+                if (value.contains("postgresql://")) {
+                    value = value.replaceAll("://([^:]+):([^@]+)@", "://***:***@");
+                }
+                System.out.println(entry.getKey() + "=" + value);
+            });
+        System.out.println("=== End Debug ===");
         
         try {
             if (databaseUrl != null && !databaseUrl.isEmpty() && !databaseUrl.startsWith("${")) {
@@ -41,11 +61,10 @@ public class DatabaseConfig {
                 System.out.println("Parsed JDBC URL: " + jdbcUrl);
                 System.out.println("Username: " + username);
             } else {
-                System.out.println("DATABASE_URL not found, using local configuration");
-                // Fallback for local development
-                config.setJdbcUrl("jdbc:postgresql://localhost:5432/spring-ats");
-                config.setUsername("ammar.s.s");
-                config.setPassword("");
+                System.err.println("ERROR: No DATABASE_URL found in environment!");
+                System.err.println("Available environment variables:");
+                System.getenv().keySet().stream().sorted().forEach(System.err::println);
+                throw new RuntimeException("DATABASE_URL environment variable is required for production deployment");
             }
         } catch (URISyntaxException e) {
             System.err.println("Error parsing DATABASE_URL: " + e.getMessage());
