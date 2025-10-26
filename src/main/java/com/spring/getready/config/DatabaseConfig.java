@@ -72,19 +72,37 @@ public class DatabaseConfig {
                 System.out.println("Database: " + dbUri.getPath());
                 
             } else {
-                System.err.println("ERROR: No DATABASE_URL found in environment!");
+                System.err.println("WARNING: No DATABASE_URL found in environment!");
                 System.err.println("Available environment variables:");
                 System.getenv().keySet().stream().sorted().forEach(System.err::println);
-                throw new RuntimeException("DATABASE_URL environment variable is required for production deployment");
+                
+                // Fallback to in-memory H2 database for demo purposes
+                System.out.println("Falling back to in-memory H2 database for demo purposes");
+                config.setJdbcUrl("jdbc:h2:mem:demo;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
+                config.setUsername("sa");
+                config.setPassword("");
+                config.setDriverClassName("org.h2.Driver");
+                
+                System.out.println("Using H2 in-memory database - data will not persist between restarts");
+                System.out.println("For production, please add a PostgreSQL database service to Railway");
             }
         } catch (Exception e) {
             System.err.println("Error configuring database: " + e.getMessage());
             e.printStackTrace();
-            throw new RuntimeException("Failed to configure database connection", e);
+            
+            // Fallback to H2 if PostgreSQL configuration fails
+            System.out.println("Falling back to H2 database due to configuration error");
+            config.setJdbcUrl("jdbc:h2:mem:demo;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
+            config.setUsername("sa");
+            config.setPassword("");
+            config.setDriverClassName("org.h2.Driver");
         }
         
         // Configure connection pool with more lenient settings
-        config.setDriverClassName("org.postgresql.Driver");
+        // Only set PostgreSQL driver if not already set (H2 fallback sets its own driver)
+        if (config.getDriverClassName() == null) {
+            config.setDriverClassName("org.postgresql.Driver");
+        }
         config.setMaximumPoolSize(5);
         config.setMinimumIdle(1);
         config.setConnectionTimeout(60000); // 60 seconds
