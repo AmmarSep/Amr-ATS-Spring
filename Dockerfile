@@ -4,22 +4,18 @@ FROM openjdk:11-jdk-slim AS build
 # Set working directory
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml
-COPY mvnw .
-COPY .mvn .mvn
+# Install Maven directly instead of using wrapper
+RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
+
+# Copy pom.xml and download dependencies
 COPY pom.xml .
-
-# Make mvnw executable
-RUN chmod +x ./mvnw
-
-# Download dependencies
-RUN ./mvnw dependency:go-offline -B
+RUN mvn dependency:go-offline -B
 
 # Copy source code
 COPY src src
 
-# Build the application
-RUN ./mvnw clean package -DskipTests -B
+# Build the application with Lombok annotation processing
+RUN mvn clean package -DskipTests -B
 
 # Production stage
 FROM openjdk:11-jre-slim
