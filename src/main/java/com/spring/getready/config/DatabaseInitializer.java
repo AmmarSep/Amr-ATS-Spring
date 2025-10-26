@@ -96,8 +96,8 @@ public class DatabaseInitializer implements ApplicationRunner {
         // Insert default admin user (password: Ats@ABC)
         try {
             jdbcTemplate.update(
-                "INSERT INTO user_details (username, email, password, user_group_short_group, is_locked) " +
-                "VALUES (?, ?, ?, ?, ?) ON CONFLICT (email) DO NOTHING",
+                "INSERT INTO user_details (username, email, password, group_ref, is_locked) " +
+                "VALUES (?, ?, ?, (SELECT group_id FROM user_group WHERE short_group = ?), ?) ON CONFLICT (email) DO NOTHING",
                 "Admin User", 
                 "admin@spring.ats", 
                 "$2a$10$N.kmMOB8gCp9OA.pGqWqge5IZ/Ww8i0V8ShjB0m90FRm2oj9.rH.S", 
@@ -112,8 +112,8 @@ public class DatabaseInitializer implements ApplicationRunner {
         // Insert sample recruiter (password: Ats@ABC)
         try {
             jdbcTemplate.update(
-                "INSERT INTO user_details (username, email, password, user_group_short_group, is_locked) " +
-                "VALUES (?, ?, ?, ?, ?) ON CONFLICT (email) DO NOTHING",
+                "INSERT INTO user_details (username, email, password, group_ref, is_locked) " +
+                "VALUES (?, ?, ?, (SELECT group_id FROM user_group WHERE short_group = ?), ?) ON CONFLICT (email) DO NOTHING",
                 "Sample Recruiter", 
                 "recruiter@spring.ats", 
                 "$2a$10$N.kmMOB8gCp9OA.pGqWqge5IZ/Ww8i0V8ShjB0m90FRm2oj9.rH.S", 
@@ -128,8 +128,8 @@ public class DatabaseInitializer implements ApplicationRunner {
         // Insert sample candidate (password: Ats@ABC)
         try {
             jdbcTemplate.update(
-                "INSERT INTO user_details (username, email, password, user_group_short_group, is_locked) " +
-                "VALUES (?, ?, ?, ?, ?) ON CONFLICT (email) DO NOTHING",
+                "INSERT INTO user_details (username, email, password, group_ref, is_locked) " +
+                "VALUES (?, ?, ?, (SELECT group_id FROM user_group WHERE short_group = ?), ?) ON CONFLICT (email) DO NOTHING",
                 "Test Candidate", 
                 "candidate@ats.com", 
                 "$2a$10$N.kmMOB8gCp9OA.pGqWqge5IZ/Ww8i0V8ShjB0m90FRm2oj9.rH.S", 

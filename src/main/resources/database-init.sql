@@ -2,6 +2,13 @@
 -- This script will create the necessary tables and initial data
 
 -- Create tables (if they don't exist)
+CREATE TABLE IF NOT EXISTS user_group (
+    group_id SERIAL PRIMARY KEY,
+    group_name VARCHAR(255) NOT NULL,
+    short_group VARCHAR(10) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE
+);
+
 CREATE TABLE IF NOT EXISTS user_details (
     user_id SERIAL PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
@@ -9,7 +16,10 @@ CREATE TABLE IF NOT EXISTS user_details (
     password VARCHAR(255) NOT NULL,
     is_locked BOOLEAN DEFAULT FALSE,
     created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user_group_short_group VARCHAR(10) DEFAULT 'STU'
+    last_login_on TIMESTAMP,
+    user_uuid VARCHAR(255),
+    group_ref INTEGER REFERENCES user_group(group_id),
+    family_ref INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS job_postings (
@@ -57,12 +67,31 @@ CREATE INDEX IF NOT EXISTS idx_app_job ON applications(job_ref);
 CREATE INDEX IF NOT EXISTS idx_app_score ON applications(ai_score DESC);
 CREATE INDEX IF NOT EXISTS idx_app_status ON applications(status);
 
+-- Insert user groups
+INSERT INTO user_group (group_name, short_group, is_active) 
+SELECT 'Administrator', 'ADM', TRUE 
+WHERE NOT EXISTS (SELECT 1 FROM user_group WHERE short_group = 'ADM');
+
+INSERT INTO user_group (group_name, short_group, is_active) 
+SELECT 'Recruiter', 'REC', TRUE 
+WHERE NOT EXISTS (SELECT 1 FROM user_group WHERE short_group = 'REC');
+
+INSERT INTO user_group (group_name, short_group, is_active) 
+SELECT 'Candidate', 'CAN', TRUE 
+WHERE NOT EXISTS (SELECT 1 FROM user_group WHERE short_group = 'CAN');
+
+INSERT INTO user_group (group_name, short_group, is_active) 
+SELECT 'Student', 'STU', TRUE 
+WHERE NOT EXISTS (SELECT 1 FROM user_group WHERE short_group = 'STU');
+
 -- Insert default admin user (password: Ats@ABC)
-INSERT INTO user_details (username, email, password, user_group_short_group, is_locked) 
-VALUES ('Admin User', 'admin@spring.ats', '$2a$10$N.kmMOB8gCp9OA.pGqWqge5IZ/Ww8i0V8ShjB0m90FRm2oj9.rH.S', 'ADM', FALSE)
+INSERT INTO user_details (username, email, password, group_ref, is_locked) 
+VALUES ('Admin User', 'admin@spring.ats', '$2a$10$N.kmMOB8gCp9OA.pGqWqge5IZ/Ww8i0V8ShjB0m90FRm2oj9.rH.S', 
+    (SELECT group_id FROM user_group WHERE short_group = 'ADM'), FALSE)
 ON CONFLICT (email) DO NOTHING;
 
 -- Insert sample recruiter (password: Ats@ABC)
-INSERT INTO user_details (username, email, password, user_group_short_group, is_locked) 
-VALUES ('Sample Recruiter', 'recruiter@spring.ats', '$2a$10$N.kmMOB8gCp9OA.pGqWqge5IZ/Ww8i0V8ShjB0m90FRm2oj9.rH.S', 'REC', FALSE)
+INSERT INTO user_details (username, email, password, group_ref, is_locked) 
+VALUES ('Sample Recruiter', 'recruiter@spring.ats', '$2a$10$N.kmMOB8gCp9OA.pGqWqge5IZ/Ww8i0V8ShjB0m90FRm2oj9.rH.S', 
+    (SELECT group_id FROM user_group WHERE short_group = 'REC'), FALSE)
 ON CONFLICT (email) DO NOTHING;
