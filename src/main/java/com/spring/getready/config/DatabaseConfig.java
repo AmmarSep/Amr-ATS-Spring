@@ -16,7 +16,7 @@ public class DatabaseConfig {
 
     @Bean
     public DataSource dataSource() {
-        HikariConfig config = new HikariConfig();
+        System.out.println("=== Configuring DataSource ===");
         
         // Try different environment variable names that Railway might use
         String databaseUrl = System.getenv("DATABASE_URL");
@@ -35,12 +35,14 @@ public class DatabaseConfig {
                            entry.getKey().contains("PG"))
             .forEach(entry -> {
                 String value = entry.getValue();
-                if (value.contains("postgresql://")) {
+                if (value != null && value.contains("postgresql://")) {
                     value = value.replaceAll("://([^:]+):([^@]+)@", "://***:***@");
                 }
                 System.out.println(entry.getKey() + "=" + value);
             });
         System.out.println("=== End Debug ===");
+        
+        HikariConfig config = new HikariConfig();
         
         try {
             if (databaseUrl != null && !databaseUrl.isEmpty() && !databaseUrl.startsWith("${")) {
@@ -49,9 +51,14 @@ public class DatabaseConfig {
                 // Parse Railway DATABASE_URL format: postgresql://user:password@host:port/database
                 URI dbUri = new URI(databaseUrl);
                 
-                String[] userInfo = dbUri.getUserInfo().split(":");
-                String username = userInfo[0];
-                String password = userInfo.length > 1 ? userInfo[1] : "";
+                String userInfo = dbUri.getUserInfo();
+                if (userInfo == null || !userInfo.contains(":")) {
+                    throw new RuntimeException("Invalid DATABASE_URL format: missing or invalid user info");
+                }
+                
+                String[] userInfoParts = userInfo.split(":");
+                String username = userInfoParts[0];
+                String password = userInfoParts.length > 1 ? userInfoParts[1] : "";
                 String jdbcUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
                 
                 config.setJdbcUrl(jdbcUrl);
@@ -60,24 +67,32 @@ public class DatabaseConfig {
                 
                 System.out.println("Parsed JDBC URL: " + jdbcUrl);
                 System.out.println("Username: " + username);
+                System.out.println("Host: " + dbUri.getHost());
+                System.out.println("Port: " + dbUri.getPort());
+                System.out.println("Database: " + dbUri.getPath());
+                
             } else {
                 System.err.println("ERROR: No DATABASE_URL found in environment!");
                 System.err.println("Available environment variables:");
                 System.getenv().keySet().stream().sorted().forEach(System.err::println);
                 throw new RuntimeException("DATABASE_URL environment variable is required for production deployment");
             }
-        } catch (URISyntaxException e) {
-            System.err.println("Error parsing DATABASE_URL: " + e.getMessage());
-            throw new RuntimeException("Failed to parse DATABASE_URL", e);
+        } catch (Exception e) {
+            System.err.println("Error configuring database: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Failed to configure database connection", e);
         }
         
+        // Configure connection pool with more lenient settings
         config.setDriverClassName("org.postgresql.Driver");
-        config.setMaximumPoolSize(10);
-        config.setMinimumIdle(2);
-        config.setConnectionTimeout(30000);
-        config.setIdleTimeout(600000);
-        config.setMaxLifetime(1800000);
+        config.setMaximumPoolSize(5);
+        config.setMinimumIdle(1);
+        config.setConnectionTimeout(60000); // 60 seconds
+        config.setIdleTimeout(300000); // 5 minutes
+        config.setMaxLifetime(900000); // 15 minutes
+        config.setLeakDetectionThreshold(60000);
         
+        System.out.println("=== DataSource Configuration Complete ===");
         return new HikariDataSource(config);
     }
 }

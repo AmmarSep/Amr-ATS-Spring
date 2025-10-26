@@ -18,6 +18,7 @@ public class LoginController {
 	@RequestMapping(value = { "/", "/login" }, method = RequestMethod.GET)
 	public String loginPage(@RequestParam(value = "error", required = false) String error,
 			@RequestParam(value = "logout", required = false) String logout, Model model) {
+		System.out.println("Login page accessed at: " + java.time.LocalDateTime.now());
 		String errorMessage = null;
 		if (error != null) {
 			errorMessage = "Username or Password is incorrect !!";
