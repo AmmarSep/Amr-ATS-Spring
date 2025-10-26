@@ -32,5 +32,10 @@ RUN mkdir -p /tmp/ats-uploads
 # Expose port
 EXPOSE 8080
 
+# Add environment variables for Railway
+ENV SPRING_PROFILES_ACTIVE=prod
+ENV CONTEXT_PATH=""
+ENV UPLOAD_PATH=/tmp/ats-uploads
+
 # Run the application
-CMD ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
+CMD ["java", "-jar", "app.jar"]
