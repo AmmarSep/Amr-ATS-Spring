@@ -338,7 +338,7 @@ public class AdminController {
 				application.setInterviewerName(null);
 				application.setInterviewLocation(null);
 				application.setInterviewScheduledOn(null);
-				
+
 				applicationRepository.save(application);
 				redirectAttributes.addFlashAttribute("message", "Interview cancelled successfully");
 			} else {
@@ -348,6 +348,26 @@ public class AdminController {
 			redirectAttributes.addFlashAttribute("error", "Error cancelling interview: " + e.getMessage());
 		}
 		modelView.setViewName("redirect:/admin/interview-scheduled");
+		return modelView;
+	}
+
+	@PostMapping("/admin/application/delete/{applicationId}")
+	public ModelAndView deleteApplication(
+			@PathVariable Integer applicationId,
+			ModelAndView modelView,
+			RedirectAttributes redirectAttributes) {
+		try {
+			Application application = applicationRepository.findById(applicationId).orElse(null);
+			if (application != null) {
+				applicationRepository.deleteById(applicationId);
+				redirectAttributes.addFlashAttribute("message", "Application deleted successfully");
+			} else {
+				redirectAttributes.addFlashAttribute("error", "Application not found");
+			}
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Error deleting application: " + e.getMessage());
+		}
+		modelView.setViewName("redirect:/admin/applications");
 		return modelView;
 	}
 
