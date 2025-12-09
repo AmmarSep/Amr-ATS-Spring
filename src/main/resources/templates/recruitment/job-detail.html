@@ -2,37 +2,97 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${job.jobTitle} + ' - Job Details'">Job Details</title>
-    <link rel="stylesheet" th:href="@{/public/assets/css/style.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${job.jobTitle} + ' - Job Details'">Job Details - ATS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
 </head>
 <body>
-    <div class="container">
-        <div class="job-detail">
-            <h1 th:text="${job.jobTitle}">Job Title</h1>
-            
-            <div class="job-info">
-                <p><strong>Location:</strong> <span th:text="${job.location}">Location</span></p>
-                <p><strong>Job Type:</strong> <span th:text="${job.jobType}">Type</span></p>
-                <p><strong>Experience Required:</strong> <span th:text="${job.experienceRequired}">Experience</span></p>
-                <p th:if="${job.postedOn != null}"><strong>Posted On:</strong> <span th:text="${job.postedOn}">Date</span></p>
-                <p th:if="${job.deadline != null}"><strong>Application Deadline:</strong> <span th:text="${job.deadline}">Deadline</span></p>
+    <div class="app-shell">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="app-header-content">
+                <div class="app-logo">
+                    <div class="app-logo-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <span>Job Details</span>
+                </div>
+                <nav class="app-nav">
+                    <a th:href="@{/recruitment/jobs}" class="app-nav-link">
+                        <i class="fas fa-arrow-left"></i> Back to Jobs
+                    </a>
+                </nav>
             </div>
-            
-            <div class="job-description">
-                <h3>Job Description</h3>
-                <p th:text="${job.jobDescription}">Description</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-content">
+            <div class="content-container" style="max-width: 800px;">
+                <div class="card animate-fade-in">
+                    <div class="card-header" style="background: linear-gradient(135deg, var(--primary-600), var(--primary-800)); color: white; padding: var(--space-8);">
+                        <h1 style="font-size: var(--text-2xl); font-weight: var(--font-bold); margin-bottom: var(--space-4);" th:text="${job.jobTitle}">Job Title</h1>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="badge" style="background: rgba(255,255,255,0.2); color: white;">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span th:text="${job.location}">Location</span>
+                            </span>
+                            <span class="badge" style="background: rgba(255,255,255,0.2); color: white;">
+                                <i class="fas fa-clock"></i>
+                                <span th:text="${job.jobType}">Type</span>
+                            </span>
+                            <span class="badge" style="background: rgba(255,255,255,0.2); color: white;">
+                                <i class="fas fa-user-tie"></i>
+                                <span th:text="${job.experienceRequired}">Experience</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="mb-6" th:if="${job.postedOn != null}">
+                            <span class="text-sm text-gray-500">
+                                <i class="fas fa-calendar-alt"></i>
+                                Posted on <span th:text="${job.postedOn}">Date</span>
+                            </span>
+                            <span th:if="${job.deadline != null}" class="text-sm text-gray-500 ml-4">
+                                <i class="fas fa-clock"></i>
+                                Application Deadline: <span th:text="${job.deadline}">Deadline</span>
+                            </span>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold mb-3" style="display: flex; align-items: center; gap: var(--space-2);">
+                                <span style="width: 4px; height: 20px; background: var(--primary-500); border-radius: 2px;"></span>
+                                Job Description
+                            </h3>
+                            <p class="text-gray-600" style="line-height: 1.8;" th:text="${job.jobDescription}">Description</p>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold mb-3" style="display: flex; align-items: center; gap: var(--space-2);">
+                                <span style="width: 4px; height: 20px; background: var(--primary-500); border-radius: 2px;"></span>
+                                Required Skills
+                            </h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="skill-tag" th:text="${job.requiredSkills}">Skills</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="flex justify-between items-center flex-wrap gap-4">
+                            <a th:href="@{/recruitment/jobs}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Job List
+                            </a>
+                            <a th:href="@{/recruitment/apply/{id}(id=${job.jobId})}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane"></i> Apply for this Position
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <div class="job-skills">
-                <h3>Required Skills</h3>
-                <p th:text="${job.requiredSkills}">Skills</p>
-            </div>
-            
-            <div class="actions">
-                <a th:href="@{/recruitment/apply/{id}(id=${job.jobId})}" class="btn btn-success">Apply for this Position</a>
-                <a th:href="@{/recruitment/jobs}" class="btn btn-secondary">Back to Job List</a>
-            </div>
-        </div>
+        </main>
     </div>
 </body>
 </html>

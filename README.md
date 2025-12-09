@@ -27,7 +27,7 @@ ATS is a web-based recruitment management system that maintains three types of u
      - Update postgres *username* and *password* in **application.properties**
      - Update *file.upload-path* for resume uploads (e.g., `/path/to/resume/uploads`)
   6. Find and run **GetreadyApplication.java** from your IDE
-  7. Open [http://localhost:8080/ats](http://localhost:8080/ats) in the browser
+7. Open [http://localhost:8080/ats](http://localhost:8080/ats) in the browser
   8. **Default Credentials:**
      - Admin: `admin@spring.ats` / `Admin@ABC`
      - Create Recruiter and Candidate accounts through admin panel

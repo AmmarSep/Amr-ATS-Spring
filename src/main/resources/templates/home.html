@@ -1,71 +1,107 @@
+<!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org" ng-app="atsApp">
 <head>
-<title>ATS - User Home</title>
-<link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css"
-	rel="stylesheet">
-<link rel="stylesheet" type="text/css"
-	th:href="@{/assets/css/style.css}"></link>
-<script type="text/javascript"
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATS - User Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/style.css}">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
 </head>
 <body ng-controller="userHomeController">
-	<nav
-		class="flex items-center justify-between flex-wrap bg-gray-700 p-6">
-		<div class="flex items-center flex-shrink-0 text-white mr-6">
-			<span class="font-semibold text-xl tracking-tight">Spring ATS</span>
-		</div>
-		<div class="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
-			<div class="text-sm lg:flex-grow"></div>
-			<div>
-				<a href="#" class="inline-block mt-0 text-white mr-4"
-					th:text="${username}"> Name </a> <a href="../logout"
-					class="inline-block text-sm px-4 py-2 leading-none hover:text-teal-400 text-white mt-0">Logout</a>
-			</div>
-		</div>
-	</nav>
-	<div class="container mx-auto m-4">
-		<div class="flex mb-4">
-			<div class="w-1/4 h-64">
-				<ul class="list-none">
-					<li
-						class="p-4 border-2 border-white cursor-pointer rounded hover:font-medium"
-						th:classappend="${assignment} ? 'text-white bg-teal-700' :  'text-teal-700 hover:border-gray-300'">
-						<a th:href="@{/home/assignment}">Assignment</a>
-					</li>
-					<li
-						class="p-4 border-2 border-white cursor-pointer rounded hover:font-medium"
-						th:classappend="${profile} ? 'text-white bg-teal-700' :  'text-teal-700 hover:border-gray-300'">
-						<a th:href="@{/home/profile}">Profile</a>
-					</li>
-					<li
-						class="p-4 border-2 border-white cursor-pointer rounded hover:font-medium"
-						th:classappend="${academy} ? 'text-white bg-teal-700' :  'text-teal-700 hover:border-gray-300'">
-						<a th:href="@{/home/academy}">Academy</a>
-					</li>
-					<li
-						class="p-4 border-2 border-white cursor-pointer rounded hover:font-medium"
-						th:classappend="${family} ? 'text-white bg-teal-700' :  'text-teal-700 hover:border-gray-300'">
-						<a th:href="@{/home/family}">Family Details</a>
-					</li>
-				</ul>
-			</div>
+    <div class="app-shell">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="app-header-content">
+                <div class="app-logo">
+                    <div class="app-logo-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <span>Spring ATS</span>
+                </div>
+                <nav class="app-nav">
+                    <div class="app-nav-user">
+                        <div class="app-nav-user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <span th:text="${username}">User</span>
+                    </div>
+                    <a href="../logout" class="app-nav-link">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </nav>
+            </div>
+        </header>
 
-			<div th:if="${assignment}" class="w-3/4 h-auto p-5 border-2 rounded">
-				<div th:replace="fragments/user/assignment :: all-assignment"></div>
-			</div>
-			<div th:if="${profile}" class="w-3/4 h-auto p-5 border-2 rounded">
-				<div th:replace="fragments/user/profile :: profile-info"></div>
-			</div>
-			<div th:if="${academy}" class="w-3/4 h-auto p-5 border-2 rounded">
-				<div th:replace="fragments/user/academy :: academy-details"></div>
-			</div>
-			<div th:if="${family}" class="w-3/4 h-auto p-5 border-2 rounded">
-				<div th:replace="fragments/user/family :: family-details"></div>
-			</div>
+        <!-- Main Content Area -->
+        <div class="app-main">
+            <!-- Sidebar -->
+            <aside class="app-sidebar">
+                <nav class="sidebar-nav">
+                    <a th:href="@{/home/assignment}"
+                       class="sidebar-nav-item"
+                       th:classappend="${assignment} ? 'active' : ''">
+                        <i class="fas fa-tasks"></i>
+                        <span>Assignment</span>
+                    </a>
+                    <a th:href="@{/home/profile}"
+                       class="sidebar-nav-item"
+                       th:classappend="${profile} ? 'active' : ''">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Profile</span>
+                    </a>
+                    <a th:href="@{/home/academy}"
+                       class="sidebar-nav-item"
+                       th:classappend="${academy} ? 'active' : ''">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Academy</span>
+                    </a>
+                    <a th:href="@{/home/family}"
+                       class="sidebar-nav-item"
+                       th:classappend="${family} ? 'active' : ''">
+                        <i class="fas fa-home"></i>
+                        <span>Family Details</span>
+                    </a>
+                </nav>
+            </aside>
 
-		</div>
-	</div>
-	<script type="text/javascript" th:src="@{/assets/js/app.js}"></script>
-	<script type="text/javascript" th:src="@{/assets/js/controller.js}"></script>
+            <!-- Content Area -->
+            <main class="app-content">
+                <div class="content-container">
+                    <!-- Assignment Content -->
+                    <div th:if="${assignment}" class="card animate-fade-in">
+                        <div class="card-body">
+                            <div th:replace="fragments/user/assignment :: all-assignment"></div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Content -->
+                    <div th:if="${profile}" class="card animate-fade-in">
+                        <div class="card-body">
+                            <div th:replace="fragments/user/profile :: profile-info"></div>
+                        </div>
+                    </div>
+
+                    <!-- Academy Content -->
+                    <div th:if="${academy}" class="card animate-fade-in">
+                        <div class="card-body">
+                            <div th:replace="fragments/user/academy :: academy-details"></div>
+                        </div>
+                    </div>
+
+                    <!-- Family Details Content -->
+                    <div th:if="${family}" class="card animate-fade-in">
+                        <div class="card-body">
+                            <div th:replace="fragments/user/family :: family-details"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script type="text/javascript" th:src="@{/assets/js/app.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/js/controller.js}"></script>
 </body>
 </html>

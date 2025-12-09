@@ -1,111 +1,153 @@
 <html xmlns:th="https://www.thymeleaf.org">
 <head>
-<title>ATS - Users</title>
+<title>ATS - Assignments</title>
 </head>
 <body>
 	<div th:fragment="all-assignment">
-		<div th:if="${message}"
-			class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 mb-3 rounded relative"
-			role="alert">
-			<strong class="font-bold">Success!!</strong> <span
-				class="block sm:inline" th:text="${message}"></span> <span
-				class="absolute top-0 bottom-0 right-0 px-4 py-3"> </span>
+		<div class="page-header">
+			<h2 class="page-title"><i class="fas fa-tasks"></i> Assignments</h2>
+			<p class="page-subtitle">Track your pending and completed assignments</p>
 		</div>
-		<div class="w-full flex flex-row-reverse">
-			<div class="inline-flex">
-				<button class="bg-gray-300 py-2 px-4 font-bold rounded-l"
-					title="Create new course"
-					ng-click="showAssignmentList = !showAssignmentList"
-					ng-class="{'bg-gray-500 text-white': !showAssignmentList, 'text-gray-800': showAssignmentList}">Pending</button>
-				<button class="bg-gray-300 py-2 px-4 font-bold rounded-r"
-					title="Course details"
-					ng-click="showAssignmentList = !showAssignmentList"
-					ng-class="{'bg-gray-500 text-white': showAssignmentList, 'text-gray-800': !showAssignmentList}">Completed</button>
+
+		<div th:if="${message}" class="alert alert-success mb-4">
+			<i class="fas fa-check-circle alert-icon"></i>
+			<div class="alert-content">
+				<strong>Success!</strong> <span th:text="${message}"></span>
 			</div>
 		</div>
-		<table class="table-fixed" ng-if="!showAssignmentList">
-			<thead>
-				<tr>
-					<th class="w-1/6 px-4 py-2">#</th>
-					<th class="w-1/6 px-4 py-2">Assignment Name</th>
-					<th class="w-2/6 px-4 py-2">Description</th>
-					<th class="w-1/6 px-4 py-2">Deadline</th>
-					<th class="w-1/6 px-4 py-2">Action</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:if="${assignment.assignments.size()==0}">
-					<td colspan="6" class="border px-4 py-2 text-center">No
-						assignments found</td>
-				</tr>
-				<tr th:each="assignment,itr: ${assignment.assignments}"
-					th:classappend="${assignment.deadline.after(#dates.createNow())} ? '' : 'bg-red-200'">
-					<td class="border px-4 py-2 text-center" th:text="${itr.index + 1}"></td>
-					<td class="border px-4 py-2" th:if="${assignment.uploadFile!=null}">
-						<a
-						th:href="@{../download/attachment?id=} + ${assignment.uploadFile.fileId}"
-						th:text="${assignment.assignmentName}" class="underline"> </a>
-					</td>
-					<td class="border px-4 py-2" th:text="${assignment.assignmentName}"
-						th:if="${assignment.uploadFile==null}"></td>
-					<td class="border px-4 py-2"
-						th:text="${assignment.assignmentDescription}"></td>
-					<td class="border px-4 py-2 text-center"
-						th:text="${#dates.format(assignment.deadline, 'dd MMM yyyy')}"></td>
-					<td class="border px-4 py-2 text-center">
-						<form th:action="@{/home/upload/submission}" method="POST"
-							enctype="multipart/form-data">
-							<input
-								class="w-64 bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-								name="file" type="file"> <input type="hidden"
-								name="assignmentId" th:value="${assignment.assignmentId}" />
-							<button
-								class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-								type="submit">Upload</button>
-						</form>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<table class="table-fixed" ng-if="showAssignmentList">
-			<thead>
-				<tr>
-					<th class="w-1/6 px-4 py-2">#</th>
-					<th class="w-1/6 px-4 py-2">Assignment Name</th>
-					<th class="w-2/6 px-4 py-2">Description</th>
-					<th class="w-1/6 px-4 py-2">Submitted on</th>
-					<th class="w-1/6 px-4 py-2">Action</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:if="${assignment.submissions.size()==0}">
-					<td colspan="6" class="border px-4 py-2 text-center">No
-						submissions found</td>
-				</tr>
-				<tr th:each="submission,itr: ${assignment.submissions}"
-					th:classappend="${submission.submittedOn.before(submission.assignmentDetail.deadline)} ? 'bg-green-200' : 'bg-red-200'">
-					<td class="border px-4 py-2 text-center" th:text="${itr.index + 1}"></td>
-					<td class="border px-4 py-2"
-						th:if="${submission.assignmentDetail.uploadFile!=null}"><a
-						th:href="@{../download/attachment?id=} + ${submission.assignmentDetail.uploadFile.fileId}"
-						th:text="${submission.assignmentDetail.assignmentName}"
-						class="underline"> </a></td>
-					<td class="border px-4 py-2"
-						th:text="${submission.assignmentDetail.assignmentName}"
-						th:if="${submission.assignmentDetail.uploadFile==null}"></td>
-					<td class="border px-4 py-2"
-						th:text="${submission.assignmentDetail.assignmentDescription}"></td>
-					<td class="border px-4 py-2 text-center"
-						th:text="${#dates.format(submission.submittedOn, 'dd MMM yyyy')}"></td>
-					<td class="border px-4 py-2 text-center"><a
-						th:href="@{../download/attachment?id=} + ${submission.uploadFile.fileId}">
-							<button
-								class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-								type="button">Download</button>
-					</a></td>
-				</tr>
-			</tbody>
-		</table>
+
+		<!-- Tab Toggle -->
+		<div class="flex justify-end mb-4">
+			<div class="btn-group" style="background: var(--gray-100); padding: var(--space-1); border-radius: var(--radius-lg);">
+				<button
+					class="btn"
+					ng-click="showAssignmentList = false"
+					ng-class="{'btn-primary': !showAssignmentList, 'btn-ghost': showAssignmentList}"
+					title="View pending assignments">
+					<i class="fas fa-clock"></i> Pending
+				</button>
+				<button
+					class="btn"
+					ng-click="showAssignmentList = true"
+					ng-class="{'btn-primary': showAssignmentList, 'btn-ghost': !showAssignmentList}"
+					title="View completed assignments">
+					<i class="fas fa-check"></i> Completed
+				</button>
+			</div>
+		</div>
+
+		<!-- Pending Assignments Table -->
+		<div ng-if="!showAssignmentList" class="table-container">
+			<table class="table">
+				<thead>
+					<tr>
+						<th style="width: 50px;">#</th>
+						<th>Assignment Name</th>
+						<th>Description</th>
+						<th style="width: 120px;">Deadline</th>
+						<th style="width: 300px;">Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:if="${assignment.assignments.size()==0}">
+						<td colspan="5" class="text-center text-gray-500">
+							<div class="empty-state" style="padding: var(--space-6);">
+								<div class="empty-state-icon" style="font-size: 32px;">
+									<i class="fas fa-clipboard-check"></i>
+								</div>
+								<p>No pending assignments</p>
+							</div>
+						</td>
+					</tr>
+					<tr th:each="assignment,itr: ${assignment.assignments}"
+						th:style="${assignment.deadline.after(#dates.createNow())} ? '' : 'background: var(--error-50);'">
+						<td th:text="${itr.index + 1}">1</td>
+						<td class="font-medium" th:if="${assignment.uploadFile!=null}">
+							<a th:href="@{../download/attachment?id=} + ${assignment.uploadFile.fileId}"
+							   th:text="${assignment.assignmentName}"
+							   class="text-primary-600">
+							</a>
+						</td>
+						<td class="font-medium" th:text="${assignment.assignmentName}" th:if="${assignment.uploadFile==null}"></td>
+						<td th:text="${assignment.assignmentDescription}"></td>
+						<td>
+							<span th:if="${assignment.deadline.after(#dates.createNow())}" class="badge badge-info">
+								<span th:text="${#dates.format(assignment.deadline, 'dd MMM yyyy')}"></span>
+							</span>
+							<span th:if="${!assignment.deadline.after(#dates.createNow())}" class="badge badge-danger">
+								Overdue - <span th:text="${#dates.format(assignment.deadline, 'dd MMM yyyy')}"></span>
+							</span>
+						</td>
+						<td>
+							<form th:action="@{/home/upload/submission}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2 flex-wrap">
+								<input type="hidden" name="assignmentId" th:value="${assignment.assignmentId}" />
+								<input
+									class="form-input"
+									style="width: 160px; font-size: var(--text-xs); padding: var(--space-1) var(--space-2);"
+									name="file"
+									type="file"
+									required>
+								<button class="btn btn-primary btn-sm" type="submit">
+									<i class="fas fa-upload"></i> Submit
+								</button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<!-- Completed Assignments Table -->
+		<div ng-if="showAssignmentList" class="table-container">
+			<table class="table">
+				<thead>
+					<tr>
+						<th style="width: 50px;">#</th>
+						<th>Assignment Name</th>
+						<th>Description</th>
+						<th style="width: 120px;">Submitted on</th>
+						<th style="width: 120px;">Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:if="${assignment.submissions.size()==0}">
+						<td colspan="5" class="text-center text-gray-500">
+							<div class="empty-state" style="padding: var(--space-6);">
+								<div class="empty-state-icon" style="font-size: 32px;">
+									<i class="fas fa-folder-open"></i>
+								</div>
+								<p>No submissions yet</p>
+							</div>
+						</td>
+					</tr>
+					<tr th:each="submission,itr: ${assignment.submissions}"
+						th:style="${submission.submittedOn.before(submission.assignmentDetail.deadline)} ? 'background: var(--success-50);' : 'background: var(--error-50);'">
+						<td th:text="${itr.index + 1}">1</td>
+						<td class="font-medium" th:if="${submission.assignmentDetail.uploadFile!=null}">
+							<a th:href="@{../download/attachment?id=} + ${submission.assignmentDetail.uploadFile.fileId}"
+							   th:text="${submission.assignmentDetail.assignmentName}"
+							   class="text-primary-600">
+							</a>
+						</td>
+						<td class="font-medium" th:text="${submission.assignmentDetail.assignmentName}" th:if="${submission.assignmentDetail.uploadFile==null}"></td>
+						<td th:text="${submission.assignmentDetail.assignmentDescription}"></td>
+						<td>
+							<span th:if="${submission.submittedOn.before(submission.assignmentDetail.deadline)}" class="badge badge-success">
+								<span th:text="${#dates.format(submission.submittedOn, 'dd MMM yyyy')}"></span>
+							</span>
+							<span th:if="${!submission.submittedOn.before(submission.assignmentDetail.deadline)}" class="badge badge-danger">
+								Late - <span th:text="${#dates.format(submission.submittedOn, 'dd MMM yyyy')}"></span>
+							</span>
+						</td>
+						<td>
+							<a th:href="@{../download/attachment?id=} + ${submission.uploadFile.fileId}" class="btn btn-primary btn-sm">
+								<i class="fas fa-download"></i> Download
+							</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
 </body>
 </html>

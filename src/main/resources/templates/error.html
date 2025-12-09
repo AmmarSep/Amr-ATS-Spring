@@ -1,15 +1,42 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<body>
-	<h1>Error Details</h1>
-	<p><strong>Status:</strong> <span th:text="${status}">Status</span></p>
-	<p><strong>Error:</strong> <span th:text="${error}">Error</span></p>
-	<p><strong>Message:</strong> <span th:text="${message}">Message</span></p>
-	<p><strong>Path:</strong> <span th:text="${path}">Path</span></p>
-	<p><strong>Timestamp:</strong> <span th:text="${timestamp}">Timestamp</span></p>
-	<div th:if="${trace}">
-		<h3>Stack Trace:</h3>
-		<pre th:text="${trace}">Stack trace</pre>
-	</div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - ATS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/style.css}">
+</head>
+<body class="error-page">
+    <div class="error-card">
+        <div class="error-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="error-code" th:text="${status}">500</div>
+        <h1 class="error-title" th:text="${error}">Something went wrong</h1>
+        <p class="error-message" th:text="${message}">An unexpected error occurred. Please try again later.</p>
+
+        <div class="btn-group" style="justify-content: center;">
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Go Back
+            </a>
+            <a th:href="@{/}" class="btn btn-primary">
+                <i class="fas fa-home"></i> Home
+            </a>
+        </div>
+
+        <div th:if="${trace}" class="error-details">
+            <h3 class="error-details-title">
+                <i class="fas fa-code"></i> Technical Details
+            </h3>
+            <p class="mb-2 text-sm"><strong>Path:</strong> <span th:text="${path}">Path</span></p>
+            <p class="mb-2 text-sm"><strong>Timestamp:</strong> <span th:text="${timestamp}">Timestamp</span></p>
+            <details>
+                <summary class="cursor-pointer text-sm font-medium mb-2">Stack Trace</summary>
+                <pre th:text="${trace}">Stack trace</pre>
+            </details>
+        </div>
+    </div>
 </body>
 </html>
